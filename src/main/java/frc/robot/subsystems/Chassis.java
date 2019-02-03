@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.Command;
@@ -20,6 +21,8 @@ import frc.robot.GroupOfMotors;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.commands.CloseShifter;
+import frc.robot.commands.OpenShifter;
 
 
 public class Chassis extends Subsystem {
@@ -32,6 +35,10 @@ public class Chassis extends Subsystem {
   private double calibrateStartAngle = 0;
   private boolean inCalibration = true;
   private double fixRate = 0;
+  public DoubleSolenoid shifter;
+  public boolean isOpenShifter;
+  public boolean isReverseMode;
+//  public boolean isSpeedMode;
 
   public Chassis(){
     motorsRight= new GroupOfMotors(RobotMap.portMotor1Right, RobotMap.portMotor2Right);
@@ -43,6 +50,11 @@ public class Chassis extends Subsystem {
     catch(Exception e){
       gyro= null;
     }
+ //   isSpeedMode = true;
+    motorsRight.SetReverseMode(true);
+    shifter = new DoubleSolenoid(11, RobotMap.portShifterForward, RobotMap.portShifterReverse);
+    isOpenShifter = false;
+    isReverseMode = false;
 }
 
 public boolean HaveActiveCommand()
@@ -68,8 +80,12 @@ public void DisableDriveCommand(){
     activeDriveCommandGroup= null;
   }
 }
+  
+public double GetAngle(){
+  return gyro.getAngle();
+}
 
-public void SetCoomand(Command cmd){
+public void SetCommand(Command cmd){
   if(cmd!= null && activeDriveCommand != null){
     try{
       activeDriveCommand.cancel();
@@ -98,16 +114,73 @@ public void GyroReset(){
     calibrateStartAngle = gyro.getAngle();
     inCalibration = true ;
   }
+  
 }
 
- public void SetValue(double speedLeft, double speedRight){
-   motorsRight.setValue(speedRight);
-   motorsLeft.setValue(speedLeft);
+ public void SetValue(double left, double right){
+   if(!isReverseMode){
+   motorsRight.setValue(right);
+   motorsLeft.setValue(left);
+   }
+   else{
+    motorsRight.setValue(left * -1);
+    motorsLeft.setValue(right * -1);
+   }
  }
+
+public void SetSpeedMode(boolean isSpeedMode){
+  motorsLeft.SetSpeedMode(isSpeedMode);
+  motorsRight.SetSpeedMode(isSpeedMode);
+}
 
 public void StopMotors(){
   motorsRight.StopMotors();
    motorsLeft.StopMotors();
+}
+
+public double GetDistance(){
+  return(motorsLeft.GetPositionInMM()+motorsRight.GetPosition())/2;
+}
+
+public double NormalizeAngle(double angle){
+  if(angle > 180){
+    return 360 - angle;
+  }
+   else if(angle < -180){
+     return 360 + angle;
+   }
+   else{
+     return angle;
+   }
+}
+
+public void OpenShifter(){
+  shifter.set(DoubleSolenoid.Value.kForward);
+  isOpenShifter = false;
+}
+
+public void CloseShifter(){
+  shifter.set(DoubleSolenoid.Value.kReverse);
+  isOpenShifter = true;
+}
+
+public void ChangeShifter(boolean open){
+  if(open){
+    (new OpenShifter()).start();
+  }
+  else{
+    (new CloseShifter()).start();
+  }
+isOpenShifter = !isOpenShifter;
+
+}
+
+public void offShifter(){
+  shifter.set(DoubleSolenoid.Value.kOff);
+}
+
+public void SetReverseMode(boolean isReverse){
+  isReverseMode = isReverse;
 }
 
   @Override

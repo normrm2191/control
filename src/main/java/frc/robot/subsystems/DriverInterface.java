@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
+import frc.robot.commands.OpenShifter;
 
 /**
  * Add your docs here.
@@ -20,28 +22,51 @@ public class DriverInterface extends Subsystem {
 
     public Joystick joystickLeft;
     public Joystick joystickRight;
+    public Joystick Bottom_Button ;
+    public Joystick Botton_Forward ;
     public XboxController xbox;
     public boolean isSpeedMode;
     
+    
     public DriverInterface(){
-      joystickLeft=new Joystick(1);
-      joystickRight=new Joystick(2);
+      joystickRight=new Joystick(1);
+      joystickLeft=new Joystick(2);
       xbox= new XboxController(0);
       isSpeedMode= true;
     }
 
-    public void ChangeMode()
+    public void ChangeMode(boolean isSpeedMode)
     {
-        isSpeedMode= !isSpeedMode;
+        this.isSpeedMode = isSpeedMode;
+        Robot.chassis.SetSpeedMode(isSpeedMode);
     }
+
     public void Reset(){
       Robot.chassis.motorsLeft.ResetEnc();
       Robot.chassis.motorsRight.ResetEnc();
     }
-public void UpdateStatus(){
-  
-}
+    
+    public void UpdateStatus(){
+      if(joystickRight.getRawButtonPressed(RobotMap.BUTTON_SHIFTER)){
+        Robot.chassis.ChangeShifter(true);
+        //Robot.chassis.OpenShifter();
+      }
+      else if(joystickLeft.getRawButtonPressed(RobotMap.BUTTON_SHIFTER)){
+        Robot.chassis.ChangeShifter(false);
+        //Robot.chassis.CloseShifter();
+      }
+      else{
+        Robot.chassis.offShifter();
+      }
 
+  /*  if(joystickRight.getRawButtonPressed(port){  //set reverse mode 
+      Robot.chassis.SetReverseMode(true);
+    }
+    else if(joystickRight.getRawButtonPressed(port){   //cancel reverse mode
+      Robot.chassis.SetReverseMode(false);
+    }
+*/
+  }
     @Override
     public void initDefaultCommand() {}
-}
+    }   

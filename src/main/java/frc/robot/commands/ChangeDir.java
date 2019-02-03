@@ -7,50 +7,59 @@
 
 package frc.robot.commands;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.subsystems.HatchPanelsSystem;
 
-public class DriveByJoystickCommand extends Command {
+public class ChangeDir extends Command {
 
-  public static final double MIN_JS_VALUE = 0.2;
+  public double target;
+  public double startDis;
+  private HatchPanelsSystem hatchPanelsSystem;
 
-  public DriveByJoystickCommand() {
-    
-    
+  public ChangeDir() {
+    target = hatchPanelsSystem.isforward ? -hatchPanelsSystem.CHANGE_DIR_MOVE : hatchPanelsSystem.CHANGE_DIR_MOVE; 
+    hatchPanelsSystem = Robot.hatchPanelsSystem;    
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    startDis = Robot.hatchPanelsSystem.GetPosition();
+    target = target + startDis;
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    
-      double leftJoystickValue=Robot.driverInterface.joystickLeft.getY();   
-      double rightJoystickValue=Robot.driverInterface.joystickRight.getY();
-      double lValue= Math.abs(leftJoystickValue) * leftJoystickValue;
-      double rValue = Math.abs(rightJoystickValue) * rightJoystickValue;
-      lValue =  Math.abs(lValue)<MIN_JS_VALUE ? 0 : lValue;
-      rValue =  Math.abs(rValue)<MIN_JS_VALUE ? 0 : rValue;
-    //  System.out.println("left value = " + lValue);
-    //  System.out.println("right value = " + rValue);
-      Robot.chassis.SetValue(-1 * lValue, -1 * rValue);
+    if(hatchPanelsSystem.isforward){
+      hatchPanelsSystem.SetValue(-0.3);
+    }else{
+      hatchPanelsSystem.SetValue(0.3);
     }
-  
+  }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    if(hatchPanelsSystem.isforward){
+      if(hatchPanelsSystem.GetPosition()<=target){
+        return true;
+      }
+    }else{
+      if(hatchPanelsSystem.GetPosition()>=target){
+        return true;
+      }
+    }
     return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    hatchPanelsSystem.StopMotor();
+    hatchPanelsSystem.ChangeDir();
+    Robot.hatchPanelsSystem.changeDirCommand = null;
   }
 
   // Called when another command which requires one or more of the same
