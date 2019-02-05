@@ -31,7 +31,7 @@ public class GroupOfMotors {
     public GroupOfMotors(int port1, int port2){
         motor1= new TalonSRX(port1);
     //    motor2= new TalonSRX(port2);
-    //    motor2.follow(motor1);
+    //    motor2.follow(motor1)motor1;
         // set PID
         motor1.config_kP(0, K_P,0);
     //    motor2.config_kP(0, K_P,0);
@@ -39,6 +39,14 @@ public class GroupOfMotors {
     //    motor2.config_kI(0, K_I,0);
         motor1.config_kD(0, K_D,0);
     //    motor2.config_kD(0, K_D,0);
+        motor1.configContinuousCurrentLimit(40);
+        motor1.configPeakCurrentDuration(200);
+        motor1.enableCurrentLimit(true);
+        motor1.configOpenloopRamp(0.3);
+        /*motor2.configContinuousCurrentLimit(40);
+        motor2.configPeakCurrentDuration(200);
+        motor2.enableCurrentLimit(true);
+        motor2.configOpenloopRamp(0.3);*/
         isSpeedMode = true;
         reverse = 1;
     }

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.DriveByJoysticArcade;
 import frc.robot.commands.DriveByJoystickCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Chassis;
@@ -48,7 +49,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
-    teleopCommand = new DriveByJoystickCommand();
+    teleopCommand = new DriveByJoysticArcade();
     compressor = new Compressor(11);
     hatchPanelsSystem = new HatchPanelsSystem();
   //  hatchPanelsSystem = new HatchPanelsSystem();
