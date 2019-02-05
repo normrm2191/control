@@ -18,20 +18,21 @@ public class GroupOfMotors {
   //  public TalonSRX motor2;
     public double reverse;
     public boolean isSpeedMode;
-    public static final double K_P = 1.0 / 14.0;
-    public static final double K_I = K_P / 40.0;
+    public static final double K_P = 1.0 / 10.0;
+    public static final double K_I = 0; //K_P / 40.0;
     public static final double K_D = 0;
     public static final double PULSE_DIS=0.116;
-    public static final double MAX_SPEED =100;
+    public static final double MAX_SPEED =300;
     public static final double FINAL_SPEED =MAX_SPEED/PULSE_DIS;
     public double baseEncoder=0;
     
     
 
     public GroupOfMotors(int port1, int port2){
+        System.out.println("Starting motor - " + port1);
         motor1= new TalonSRX(port1);
     //    motor2= new TalonSRX(port2);
-    //    motor2.follow(motor1)motor1;
+    //    motor2.follow(motor1);
         // set PID
         motor1.config_kP(0, K_P,0);
     //    motor2.config_kP(0, K_P,0);
@@ -39,14 +40,6 @@ public class GroupOfMotors {
     //    motor2.config_kI(0, K_I,0);
         motor1.config_kD(0, K_D,0);
     //    motor2.config_kD(0, K_D,0);
-        motor1.configContinuousCurrentLimit(40);
-        motor1.configPeakCurrentDuration(200);
-        motor1.enableCurrentLimit(true);
-        motor1.configOpenloopRamp(0.3);
-        /*motor2.configContinuousCurrentLimit(40);
-        motor2.configPeakCurrentDuration(200);
-        motor2.enableCurrentLimit(true);
-        motor2.configOpenloopRamp(0.3);*/
         isSpeedMode = true;
         reverse = 1;
     }
@@ -60,11 +53,11 @@ public class GroupOfMotors {
     }
 
     public void setValue(double value){
-        System.out.println("set to motor = " + reverse * FINAL_SPEED * value );
         if(Robot.driverInterface.isSpeedMode){
+            System.out.println("set to motor = " + reverse * FINAL_SPEED * value );
             motor1.set(ControlMode.Velocity, reverse * FINAL_SPEED * value);
         }else{
-        motor1.set(ControlMode.PercentOutput, reverse * value);
+            motor1.set(ControlMode.PercentOutput, reverse * value);
         }
     }
 
@@ -73,10 +66,10 @@ public class GroupOfMotors {
     }
 
     public void ResetEnc(){
-        baseEncoder=motor1.getSelectedSensorPosition(0);
+        baseEncoder=motor1.getSelectedSensorPosition();
     }
     public double GetAbsPosition(){
-        return motor1.getSelectedSensorPosition(0);
+        return motor1.getSelectedSensorPosition();
     }
     public double GetPosition(){
         return reverse*(GetAbsPosition()-baseEncoder);

@@ -26,16 +26,17 @@ public class DriveByJoysticArcade extends Command {
   @Override
   protected void execute() {
     double x = Robot.driverInterface.joystickRight.getX();
-    double y = Robot.driverInterface.joystickRight.getX();
-    x = Math.abs(x) * x;
-    y = Math.abs(y) * y;
+    double y = -Robot.driverInterface.joystickRight.getY(); //joystic's y value is reversed
+    x =  Math.abs(x)<DriveByJoystickCommand.MIN_JS_VALUE ? 0 : x;
+    y =  Math.abs(y)<DriveByJoystickCommand.MIN_JS_VALUE ? 0 : y;
     double leftSpeed = y - x;
     double rightSpeed = y + x;
     if(leftSpeed < -1) leftSpeed = -1;
     if(leftSpeed > 1) leftSpeed = 1;
-    if(rightSpeed < -1) leftSpeed = -1;
-    if(rightSpeed > 1) leftSpeed = 1;
-    Robot.chassis.SetValue(-1 * leftSpeed, -1 * rightSpeed);
+    if(rightSpeed < -1) rightSpeed = -1;
+    if(rightSpeed > 1) rightSpeed = 1;
+    System.out.println("drive: " + x + " " + y + " - " + leftSpeed + "/" + rightSpeed);
+    Robot.chassis.SetValue(leftSpeed,rightSpeed);
   }
 
   // Make this return true when this Command no longer needs to run execute()

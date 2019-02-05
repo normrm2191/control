@@ -19,7 +19,7 @@ public class RobotMap {
   static public int portMotor2Left=2;
   static public int portMotor1Right=4;
   static public int portMotor2Right=1;
-  static public int portLiftMotor = 0;
+
   static public int portSwitchMotor = 0;
 
   public static int portShifterForward = 0;

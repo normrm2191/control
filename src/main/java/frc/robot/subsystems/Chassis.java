@@ -131,8 +131,8 @@ public void GyroReset(){
    motorsLeft.setValue(left);
    }
    else{
-    motorsRight.setValue(left * -1);
-    motorsLeft.setValue(right * -1);
+    motorsRight.setValue(right * -1);
+    motorsLeft.setValue(left * -1);
    }
  }
 

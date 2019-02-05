@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
-    teleopCommand = new DriveByJoysticArcade();
+    teleopCommand = new DriveByJoystickCommand();
     compressor = new Compressor(11);
     hatchPanelsSystem = new HatchPanelsSystem();
   //  hatchPanelsSystem = new HatchPanelsSystem();
@@ -60,6 +60,8 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     k_p = SmartDashboard.getNumber("K_P", 1/15);
     k_i = SmartDashboard.getNumber("K_I", 0.0017);
+    SmartDashboard.putNumber("encode right", Robot.chassis.motorsRight.GetPositionInMM());
+    SmartDashboard.putNumber("encode left", Robot.chassis.motorsLeft.GetPositionInMM());
   }
 
   @Override

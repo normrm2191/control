@@ -33,7 +33,7 @@ public class Lift extends Subsystem {
   public TalonSRX switchMotor; 
 
   public Lift(){
-    liftMotor= new TalonSRX(RobotMap.portLiftMotor);
+  //  liftMotor= new TalonSRX(RobotMap.portLiftMotor);
     switchMotor= new TalonSRX(RobotMap.portSwitchMotor);
     liftMotor.config_kP(0, K_P,0);
     liftMotor.config_kI(0, K_I,0);
