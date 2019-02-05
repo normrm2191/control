@@ -57,6 +57,14 @@ public class Chassis extends Subsystem {
     isReverseMode = false;
 }
 
+public void Set_K_P(double K_P){
+  motorsLeft.ConfigKP(K_P);
+}
+
+public void Set_K_I(double K_I){
+  motorsLeft.ConfigKP(K_I);
+}
+
 public boolean HaveActiveCommand()
 {
   if(activeDriveCommand != null && !activeDriveCommand.isRunning())

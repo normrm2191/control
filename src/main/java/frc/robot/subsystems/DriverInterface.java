@@ -59,13 +59,16 @@ public class DriverInterface extends Subsystem {
         Robot.chassis.offShifter();
       }
 
-  /*  if(joystickRight.getRawButtonPressed(port){  //set reverse mode 
+    if(joystickLeft.getRawButtonPressed(7)){  //set reverse mode 
       Robot.chassis.SetReverseMode(true);
     }
-    else if(joystickRight.getRawButtonPressed(port){   //cancel reverse mode
+    else if(joystickLeft.getRawButtonPressed(8)){   //cancel reverse mode
       Robot.chassis.SetReverseMode(false);
     }
-*/
+    if(joystickLeft.getRawButtonPressed(9)){ //go straight
+
+    }
+
   }
     @Override
     public void initDefaultCommand() {}

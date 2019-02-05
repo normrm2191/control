@@ -61,7 +61,7 @@ public class TurnByDegrees extends Command {
 	
 	private void setPosition(double angle) {
     Robot.chassis.motorsLeft.motor1.config_kP(0, K_P,0);
-    Robot.chassis.motorsRight.motor2.config_kP(0, K_P,0);
+  //  Robot.chassis.motorsRight.motor2.config_kP(0, K_P,0);
 		if(angle > 30) {
 			velocity = 2 * VELOCITY;
 		} else if(angle > 2) {

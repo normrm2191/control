@@ -15,9 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 public class GroupOfMotors {
     
     public TalonSRX motor1;
-    public TalonSRX motor2;
-    public TalonSRX motor3;
-    public TalonSRX motor4;
+  //  public TalonSRX motor2;
     public double reverse;
     public boolean isSpeedMode;
     public static final double K_P = 1.0 / 14.0;
@@ -32,21 +30,25 @@ public class GroupOfMotors {
 
     public GroupOfMotors(int port1, int port2){
         motor1= new TalonSRX(port1);
-        motor2= new TalonSRX(port2);
-        motor2.follow(motor1);
+    //    motor2= new TalonSRX(port2);
+    //    motor2.follow(motor1);
         // set PID
         motor1.config_kP(0, K_P,0);
-        motor2.config_kP(0, K_P,0);
+    //    motor2.config_kP(0, K_P,0);
         motor1.config_kI(0, K_I,0);
-        motor2.config_kI(0, K_I,0);
+    //    motor2.config_kI(0, K_I,0);
         motor1.config_kD(0, K_D,0);
-        motor2.config_kD(0, K_D,0);
+    //    motor2.config_kD(0, K_D,0);
         isSpeedMode = true;
         reverse = 1;
     }
 
     public void ConfigKP(double k_p){
         motor1.config_kP(0, k_p, 0);
+    }
+
+    public void ConfigKI(double k_i){
+        motor1.config_kP(0, k_i, 0);
     }
 
     public void setValue(double value){

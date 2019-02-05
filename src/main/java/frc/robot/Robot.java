@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.DriveByJoystickCommand;
@@ -35,6 +36,10 @@ public class Robot extends TimedRobot {
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
 
+  double k_p;
+  double k_i;
+  
+
   @Override
   public void robotInit() {
     robot = this;
@@ -45,12 +50,15 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto mode", m_chooser);
     teleopCommand = new DriveByJoystickCommand();
     compressor = new Compressor(11);
+    hatchPanelsSystem = new HatchPanelsSystem();
   //  hatchPanelsSystem = new HatchPanelsSystem();
 //    lift= new Lift();
   }
 
   @Override
   public void robotPeriodic() {
+    k_p = SmartDashboard.getNumber("K_P", 1/15);
+    k_i = SmartDashboard.getNumber("K_I", 0.0017);
   }
 
   @Override
@@ -95,7 +103,8 @@ public class Robot extends TimedRobot {
     chassis.gyro.calibrate();
     teleopCommand.start();
     compressor.start();
-
+    chassis.Set_K_P(k_p);
+    chassis.Set_K_I(k_i);
   }
 
   @Override
