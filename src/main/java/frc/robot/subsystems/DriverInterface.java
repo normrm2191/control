@@ -29,8 +29,8 @@ public class DriverInterface extends Subsystem {
     
     
     public DriverInterface(){
-      joystickRight=new Joystick(1);
-      joystickLeft=new Joystick(2);
+      joystickRight=new Joystick(2);
+      joystickLeft=new Joystick(1);
       xbox= new XboxController(0);
       isSpeedMode= true;
     }

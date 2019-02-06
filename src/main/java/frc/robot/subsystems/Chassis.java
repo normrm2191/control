@@ -41,8 +41,8 @@ public class Chassis extends Subsystem {
 //  public boolean isSpeedMode;
 
   public Chassis(){
-    motorsRight= new GroupOfMotors(RobotMap.portMotor1Right, RobotMap.portMotor2Right);
-    motorsLeft= new GroupOfMotors(RobotMap.portMotor1Left, RobotMap.portMotor2Left);
+    motorsRight= new GroupOfMotors(3, RobotMap.portMotor2Right);
+    motorsLeft= new GroupOfMotors(2, RobotMap.portMotor2Left);
     try{
       gyro= new ADXRS450_Gyro();
       gyro.calibrate();
@@ -62,7 +62,7 @@ public void Set_K_P(double K_P){
 }
 
 public void Set_K_I(double K_I){
-  motorsLeft.ConfigKP(K_I);
+  motorsLeft.ConfigKI(K_I);
 }
 
 public boolean HaveActiveCommand()
@@ -118,7 +118,6 @@ public void Calibrate(){
 public void GyroReset(){
   if(gyro!= null){
     gyro.reset();
-    calibrateStartAngle=System.currentTimeMillis();
     calibrateStartAngle = gyro.getAngle();
     inCalibration = true ;
   }
@@ -127,8 +126,8 @@ public void GyroReset(){
 
  public void SetValue(double left, double right){
    if(!isReverseMode){
-   motorsRight.setValue(right);
-   motorsLeft.setValue(left);
+    motorsRight.setValue(right);
+    motorsLeft.setValue(left);
    }
    else{
     motorsRight.setValue(right * -1);

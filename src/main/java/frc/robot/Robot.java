@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.DriveByJoysticArcade;
 import frc.robot.commands.DriveByJoystickCommand;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.GoStraight;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.DriverInterface;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -49,10 +52,12 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
-    teleopCommand = new DriveByJoystickCommand();
+    teleopCommand = new DriveByJoysticArcade();
     compressor = new Compressor(11);
     hatchPanelsSystem = new HatchPanelsSystem();
-  //  hatchPanelsSystem = new HatchPanelsSystem();
+    SmartDashboard.setDefaultNumber("K_P", 0.15);
+    SmartDashboard.setDefaultNumber("K_I", 0.001);
+    //  hatchPanelsSystem = new HatchPanelsSystem();
 //    lift= new Lift();
   }
 
@@ -75,7 +80,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_chooser.getSelected();
+    m_autonomousCommand = new GoStraight(1000, 0.5);
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
@@ -95,6 +100,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
+    
+
   }
 
   @Override
@@ -102,12 +109,14 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    chassis.GyroReset();
     chassis.gyro.calibrate();
-    teleopCommand.start();
+    chassis.GyroReset();
     compressor.start();
     chassis.Set_K_P(k_p);
-    chassis.Set_K_I(k_i);
+    System.out.println("K_P = " + k_p);
+    System.out.println("K_I = " + k_i);
+    //chassis.Set_K_I(k_i);
+    teleopCommand.start();
   }
 
   @Override
@@ -115,8 +124,6 @@ public class Robot extends TimedRobot {
     Scheduler.getInstance().run();
     driverInterface.UpdateStatus();
     hatchPanelsSystem.UpdateStatus();
-  //  System.out.println("left position = " + chassis.motorsLeft.GetPositionInMM());
-  //  System.out.println("right position = " + chassis.motorsRight.GetPositionInMM());
   }
 
   @Override

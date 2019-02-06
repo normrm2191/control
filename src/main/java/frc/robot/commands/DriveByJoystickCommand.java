@@ -36,8 +36,6 @@ public class DriveByJoystickCommand extends Command {
       double rValue = Math.abs(rightJoystickValue) * rightJoystickValue;
       lValue =  Math.abs(lValue)<MIN_JS_VALUE ? 0 : lValue;
       rValue =  Math.abs(rValue)<MIN_JS_VALUE ? 0 : rValue;
-    //  System.out.println("left value = " + lValue);
-    //  System.out.println("right value = " + rValue);
       Robot.chassis.SetValue(-1 * lValue, -1 * rValue);
       edu.wpi.first.wpilibj.drive.DifferentialDrive dd;
       //dd.arcadeDrive(xSpeed, zRotation);

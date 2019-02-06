@@ -18,11 +18,11 @@ public class GroupOfMotors {
   //  public TalonSRX motor2;
     public double reverse;
     public boolean isSpeedMode;
-    public static final double K_P = 1.0 / 10.0;
+    public static final double K_P = 1.0 / 5.0;
     public static final double K_I = 0; //K_P / 40.0;
     public static final double K_D = 0;
     public static final double PULSE_DIS=0.116;
-    public static final double MAX_SPEED =300;
+    public static final double MAX_SPEED =500;
     public static final double FINAL_SPEED =MAX_SPEED/PULSE_DIS;
     public double baseEncoder=0;
     
@@ -54,7 +54,6 @@ public class GroupOfMotors {
 
     public void setValue(double value){
         if(Robot.driverInterface.isSpeedMode){
-            System.out.println("set to motor = " + reverse * FINAL_SPEED * value );
             motor1.set(ControlMode.Velocity, reverse * FINAL_SPEED * value);
         }else{
             motor1.set(ControlMode.PercentOutput, reverse * value);
