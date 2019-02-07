@@ -19,10 +19,10 @@ public class GroupOfMotors {
     public double reverse;
     public boolean isSpeedMode;
     public static final double K_P = 1.0 / 5.0;
-    public static final double K_I = 0; //K_P / 40.0;
+    public static final double K_I = 0;
     public static final double K_D = 0;
     public static final double PULSE_DIS=0.116;
-    public static final double MAX_SPEED =500;
+    public static final double MAX_SPEED =400;
     public static final double FINAL_SPEED =MAX_SPEED/PULSE_DIS;
     public double baseEncoder=0;
     

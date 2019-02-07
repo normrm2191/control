@@ -16,10 +16,13 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.CloseShifter;
 import frc.robot.commands.DriveByJoysticArcade;
 import frc.robot.commands.DriveByJoystickCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.GoStraight;
+import frc.robot.commands.OpenShifter;
+import frc.robot.commands.TurnByDegrees;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.DriverInterface;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -63,6 +66,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putNumber("angle", chassis.GetAngle());
     k_p = SmartDashboard.getNumber("K_P", 1/15);
     k_i = SmartDashboard.getNumber("K_I", 0.0017);
     SmartDashboard.putNumber("encode right", Robot.chassis.motorsRight.GetPositionInMM());
@@ -80,8 +84,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = new GoStraight(1000, 0.5);
-
+    Robot.chassis.resetEncs();
+    new CloseShifter().start(); 
+    m_autonomousCommand = new TurnByDegrees(40);
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
      * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand

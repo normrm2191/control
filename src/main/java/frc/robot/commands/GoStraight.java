@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.subsystems.Chassis;
 
 public class GoStraight extends Command {
 
@@ -19,16 +20,14 @@ public class GoStraight extends Command {
   public double sumError;
   public double lastError;
   public double maxSpeed;
-  public static final double MAX_SPEED = 0.2;
   public int direction;
   public boolean stopAtEnd;
   public long maxTime;
   
-  public static final double K_P = 1.0 / 100.0;
+  public static final double K_P = 1.0 / 50.0;
   public static final double K_I = K_P / 100;
   public static final double K_D = 0;
-  public static final double MIN_SPEED = 0.2;
-  public static final int FINAL_DISTANCE = 300;
+  public static final int FINAL_DISTANCE = 500;
   
   public GoStraight(double distance,double speed) {
     this(distance,speed,true,-1);    
@@ -66,6 +65,7 @@ public class GoStraight extends Command {
     }
     SetDistance();
     remaining();
+    System.out.println("remaining = " + remain);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -76,12 +76,11 @@ public class GoStraight extends Command {
       double leftSpeed = speed;
       double rightSpeed = speed;
       double corr = 0;
+      double local_speed = speed;
       remaining();
       if(remain < FINAL_DISTANCE && stopAtEnd){
-        leftSpeed = leftSpeed * 0.9 * remain / FINAL_DISTANCE + 0.1;
-        rightSpeed = rightSpeed * 0.9 * remain / FINAL_DISTANCE + 0.1;
+        local_speed = speed * 0.6 * remain / FINAL_DISTANCE;
       }
-      else{
         double angle = Robot.chassis.GetAngle();
         double error = angle - gyroStartValue;
         sumError += error;
@@ -90,8 +89,8 @@ public class GoStraight extends Command {
         double d = (lastError - error) * K_D;
         lastError = error;
         corr = 2* (p + i + d);
-        leftSpeed = speed - corr;
-        rightSpeed = speed + corr;
+        leftSpeed = local_speed * (1 - corr);
+        rightSpeed = local_speed * (1 + corr);
         if(leftSpeed < 0){
           leftSpeed = 0;
         }
@@ -106,6 +105,16 @@ public class GoStraight extends Command {
           leftSpeed = (leftSpeed / rightSpeed) * maxSpeed;
           rightSpeed = maxSpeed;
         }
+        System.out.println(
+                  "r enc = " + Robot.chassis.motorsRight.GetPositionInMM() +
+                  "l enc = " + Robot.chassis.motorsLeft.GetPositionInMM() +
+                  "remaining = " + remain + 
+                  "/ angle = " + angle + 
+                  "/ local speed = " + local_speed +
+                  "/ error = " + error + 
+                  "/ corr = " + corr + 
+                  "/ left speed = " + leftSpeed +
+                  "/ right speed = " + rightSpeed );
         if(direction > 0){
           Robot.chassis.motorsLeft.setValue(leftSpeed);
           Robot.chassis.motorsRight.setValue(rightSpeed);
@@ -114,7 +123,6 @@ public class GoStraight extends Command {
           Robot.chassis.motorsLeft.setValue(-rightSpeed);
           Robot.chassis.motorsRight.setValue(-leftSpeed);
         }
-      }
       
     }
     catch(Exception e){
@@ -147,7 +155,7 @@ protected void remaining(){
     "/" + (int)(Robot.chassis.motorsRight.GetPositionInMM())+" angle= "+(int)(Robot.chassis.GetAngle())+ 
      " remain = "+ remain);
      if(stopAtEnd){
-       Robot.chassis.SetValue(0, 0);
+       Robot.chassis.SetValue(-0.1 , -0.1);
      }
      Robot.chassis.SetCommand(null);
   }

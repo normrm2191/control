@@ -146,7 +146,7 @@ public void StopMotors(){
 }
 
 public double GetDistance(){
-  return(motorsLeft.GetPositionInMM()+motorsRight.GetPosition())/2;
+  return(motorsLeft.GetPositionInMM()+motorsRight.GetPositionInMM())/2;
 }
 
 public double NormalizeAngle(double angle){
@@ -188,6 +188,11 @@ public void offShifter(){
 
 public void SetReverseMode(boolean isReverse){
   isReverseMode = isReverse;
+}
+
+public void resetEncs(){
+  motorsLeft.ResetEnc();
+  motorsRight.ResetEnc();
 }
 
   @Override
