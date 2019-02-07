@@ -13,12 +13,11 @@ import frc.robot.Robot;
 
 public class TurnByDegrees extends Command {
 
-  static final double K_P = 0.6;
-	static final double WHEEL_BASE = 610;
+  static final double K_P = 0.01;
+	static final double WHEEL_BASE = 635;
 	static final double FULL_CIRCLE = Math.PI * WHEEL_BASE; // Wheel Base is the Diameter
 	static final double MM_PER_DEGREE = FULL_CIRCLE/360;
-	static final double MAX_RATE = 1;
-	static final double VELOCITY = 170 * MM_PER_DEGREE / 10 / GroupOfMotors.PULSE_DIS;
+	static final double VELOCITY = 10 * MM_PER_DEGREE / 10;
 
 	public double targetAngle;
 	public double angle;
@@ -44,6 +43,7 @@ public class TurnByDegrees extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+		Robot.chassis.Set_K_P(K_P);
     Robot.chassis.SetCommand(this);
 		_startTime = System.currentTimeMillis();
 		targetAngle= Robot.chassis.NormalizeAngle(angle + Robot.chassis.GetAngle());
@@ -60,21 +60,19 @@ public class TurnByDegrees extends Command {
 	}
 	
 	private void setPosition(double angle) {
-    Robot.chassis.motorsLeft.motor1.config_kP(0, K_P,0);
-  //  Robot.chassis.motorsRight.motor2.config_kP(0, K_P,0);
 		if(angle > 30) {
-			velocity = 2 * VELOCITY;
-		} else if(angle > 2) {
 			velocity = VELOCITY;
+		} else if(angle > 2) {
+			velocity = VELOCITY / 2;
 		} else if(angle < -30) {
-			velocity = -2 * VELOCITY;
+			velocity =  -VELOCITY;
 		} else if(angle < -2) {
-			velocity = -VELOCITY;
+			velocity = -VELOCITY / 2;
 		} else {
 			velocity -= 0;
 		}
 		System.out.println("Turn to " + angle + " velocity = " + velocity);
-		Robot.chassis.SetValue(-velocity, velocity);
+		Robot.chassis.SetValue(velocity, -velocity);
 	}
 
 
@@ -95,7 +93,6 @@ public class TurnByDegrees extends Command {
   @Override
   protected boolean isFinished() {
     if((angle >= 0 && remaining() <=3 ) || (angle < 0 && remaining() >= -3)) {
-			Robot.chassis.StopMotors();
 			return true;
 		}
 		return false;

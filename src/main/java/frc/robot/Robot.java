@@ -79,6 +79,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    if(driverInterface.joystickRight.getRawButtonPressed(2)){
+      chassis.GyroReset();
+      chassis.Calibrate();
+    }
+    chassis.Calibrate();
     Scheduler.getInstance().run();
   }
 
@@ -114,8 +119,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    chassis.gyro.calibrate();
     chassis.GyroReset();
+    chassis.gyro.calibrate();
     compressor.start();
     chassis.Set_K_P(k_p);
     System.out.println("K_P = " + k_p);

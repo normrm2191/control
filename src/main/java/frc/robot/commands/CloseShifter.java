@@ -30,7 +30,7 @@ public class CloseShifter extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    shifter.set(DoubleSolenoid.Value.kForward);
+    shifter.set(DoubleSolenoid.Value.kReverse);
     finished = true;
   }
 
