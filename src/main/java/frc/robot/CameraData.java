@@ -20,7 +20,7 @@ import java.net.UnknownHostException;
 /**
  * Add your docs here.
  */
-public class CameraData {
+public class CameraData extends Thread {
     
     public volatile double startAngle;
 	public volatile double distance;
@@ -37,5 +37,11 @@ public class CameraData {
 		distance = 0;
 		endAngle = 0;
 		targetFound = false;
-    }
+	}
+	
+	@Override
+	public void run() {
+		super.run();
+	}
+	
 }

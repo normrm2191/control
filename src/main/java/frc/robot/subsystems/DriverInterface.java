@@ -48,12 +48,14 @@ public class DriverInterface extends Subsystem {
     
     public void UpdateStatus(){
       if(joystickRight.getRawButtonPressed(RobotMap.BUTTON_SHIFTER)){
-        Robot.chassis.ChangeShifter(true);
-        //Robot.chassis.OpenShifter();
+        //Robot.chassis.ChangeShifter(true);
+        System.out.println("open buchna");
+        Robot.chassis.setSlowMode();
       }
       else if(joystickLeft.getRawButtonPressed(RobotMap.BUTTON_SHIFTER)){
-        Robot.chassis.ChangeShifter(false);
-        //Robot.chassis.CloseShifter();
+        //Robot.chassis.ChangeShifter(false);
+        System.out.println("close buchna");
+        Robot.chassis.setFastMode();
       }
       else{
         Robot.chassis.offShifter();

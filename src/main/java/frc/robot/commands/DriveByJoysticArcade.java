@@ -29,8 +29,8 @@ public class DriveByJoysticArcade extends Command {
     double y = -Robot.driverInterface.joystickRight.getY(); //joystic's y value is reversed
     x =  Math.abs(x)<DriveByJoystickCommand.MIN_JS_VALUE ? 0 : x;
     y =  Math.abs(y)<DriveByJoystickCommand.MIN_JS_VALUE ? 0 : y;
-    double leftSpeed = y - x;
-    double rightSpeed = y + x;
+    double leftSpeed = y + x;
+    double rightSpeed = y - x;
     if(leftSpeed < -1) leftSpeed = -1;
     if(leftSpeed > 1) leftSpeed = 1;
     if(rightSpeed < -1) rightSpeed = -1;

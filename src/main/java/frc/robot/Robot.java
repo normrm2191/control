@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", new ExampleCommand());
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
-    teleopCommand = new DriveByJoysticArcade();
+    teleopCommand = new DriveByJoystickCommand();
     compressor = new Compressor(11);
     hatchPanelsSystem = new HatchPanelsSystem();
     SmartDashboard.setDefaultNumber("K_P", 0.15);
@@ -90,8 +90,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     Robot.chassis.resetEncs();
-    new CloseShifter().start(); 
-    m_autonomousCommand = new TurnByDegrees(40);
+    chassis.setSlowMode();
+    m_autonomousCommand = new TurnByDegrees(40,200);
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
      * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -125,6 +125,7 @@ public class Robot extends TimedRobot {
     chassis.Set_K_P(k_p);
     System.out.println("K_P = " + k_p);
     System.out.println("K_I = " + k_i);
+    chassis.setFastMode();
     //chassis.Set_K_I(k_i);
     teleopCommand.start();
   }

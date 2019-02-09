@@ -17,7 +17,8 @@ public class TurnByDegrees extends Command {
 	static final double WHEEL_BASE = 635;
 	static final double FULL_CIRCLE = Math.PI * WHEEL_BASE; // Wheel Base is the Diameter
 	static final double MM_PER_DEGREE = FULL_CIRCLE/360;
-	static final double VELOCITY = 10 * MM_PER_DEGREE / 10;
+	static final double VELOCITY = MM_PER_DEGREE / 10;
+	static final int FINAL_ANGLE = 30;
 
 	public double targetAngle;
 	public double angle;
@@ -27,14 +28,16 @@ public class TurnByDegrees extends Command {
 	double basePosL = 0;
 	double basePosR = 0;
 	double lastRateAngle = 0;
-	double velocity = 0;
+	int velocity = 0;
+	int speed;
 	
 	long _startTime;
 	int nLoop = 0;
 
 
-  public TurnByDegrees(double angle) {
+  public TurnByDegrees(int angle , int speed) {
 		this.angle = angle;
+		this.speed = speed;
 	}
 	
 	
@@ -51,8 +54,7 @@ public class TurnByDegrees extends Command {
 		nLoop = 0;
 		System.out.println("Turn By Degree to " + angle +  " startTime = " + _startTime + " start angle=" + Robot.chassis.GetAngle() + 
 				" Target=" + targetAngle);
-		setPosition(angle);
-		
+		velocity = (int)(speed * MM_PER_DEGREE);
   }
   
   private double remaining() {
@@ -60,7 +62,10 @@ public class TurnByDegrees extends Command {
 	}
 	
 	private void setPosition(double angle) {
-		if(angle > 30) {
+		if(angle < FINAL_ANGLE){
+			velocity = (int)( speed * 0.5 * angle / FINAL_ANGLE);
+		}
+		/*if(angle > 30) {
 			velocity = VELOCITY;
 		} else if(angle > 2) {
 			velocity = VELOCITY / 2;
@@ -70,22 +75,23 @@ public class TurnByDegrees extends Command {
 			velocity = -VELOCITY / 2;
 		} else {
 			velocity -= 0;
-		}
+		}*/
 		System.out.println("Turn to " + angle + " velocity = " + velocity);
-		Robot.chassis.SetValue(velocity, -velocity);
+		Robot.chassis.SetValue(velocity,-velocity);
 	}
 
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    nLoop++;
-		if(nLoop == 2) {
+    /*nLoop++;
+		if(nLoop != 1) {
 			setPosition(remaining());
-		}
-		if(Math.abs(velocity) > VELOCITY && Math.abs(remaining()) < 30) {
+		}*/
+		setPosition(remaining());
+		/*if(Math.abs(velocity) > VELOCITY && Math.abs(remaining()) < 30) {
 			setPosition(remaining());
-		}
+		}*/
 
   }
 

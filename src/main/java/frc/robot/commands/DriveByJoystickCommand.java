@@ -30,15 +30,13 @@ public class DriveByJoystickCommand extends Command {
   @Override
   protected void execute() {
     
-      double leftJoystickValue=Robot.driverInterface.joystickLeft.getY();   
-      double rightJoystickValue=Robot.driverInterface.joystickRight.getY();
-      double lValue= Math.abs(leftJoystickValue) * leftJoystickValue;
+      double leftJoystickValue = -Robot.driverInterface.joystickLeft.getY();   
+      double rightJoystickValue = -Robot.driverInterface.joystickRight.getY();
+      double lValue = Math.abs(leftJoystickValue) * leftJoystickValue;
       double rValue = Math.abs(rightJoystickValue) * rightJoystickValue;
-      lValue =  Math.abs(lValue)<MIN_JS_VALUE ? 0 : lValue;
-      rValue =  Math.abs(rValue)<MIN_JS_VALUE ? 0 : rValue;
-      Robot.chassis.SetValue(-1 * lValue, -1 * rValue);
-      edu.wpi.first.wpilibj.drive.DifferentialDrive dd;
-      //dd.arcadeDrive(xSpeed, zRotation);
+      lValue = Math.abs(lValue)<MIN_JS_VALUE ? 0 : lValue;
+      rValue = Math.abs(rValue)<MIN_JS_VALUE ? 0 : rValue;
+      Robot.chassis.SetValue(lValue, rValue);
     }
   
 

@@ -7,18 +7,13 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.GroupOfMotors;
-import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.CloseShifter;
@@ -35,14 +30,21 @@ public class Chassis extends Subsystem {
   private double calibrateStartAngle = 0;
   private boolean inCalibration = true;
   private double fixRate = 0;
-  public DoubleSolenoid shifter;
-  public boolean isOpenShifter;
+  public DoubleSolenoid shifter; // open = fast
   public boolean isReverseMode;
+  public double max_speed;
+  public boolean in_fast_mode = false;
 //  public boolean isSpeedMode;
 
   public Chassis(){
-    motorsRight= new GroupOfMotors(3, RobotMap.portMotor2Right);
-    motorsLeft= new GroupOfMotors(2, RobotMap.portMotor2Left);
+    shifter = new DoubleSolenoid(11,RobotMap.portShifterForward, RobotMap.portShifterReverse);
+    max_speed = GroupOfMotors.MAX_SPEED_SLOW / GroupOfMotors.PULSE_DIS;
+    if(shifter.get() == DoubleSolenoid.Value.kReverse) {
+      in_fast_mode = true;
+      max_speed = GroupOfMotors.MAX_SPEED_FAST / GroupOfMotors.PULSE_DIS;
+    }
+    motorsRight= new GroupOfMotors(3, RobotMap.portMotor2Right, in_fast_mode);
+    motorsLeft= new GroupOfMotors(2, RobotMap.portMotor2Left, in_fast_mode);
     try{
       gyro= new ADXRS450_Gyro();
       gyro.calibrate();
@@ -52,18 +54,28 @@ public class Chassis extends Subsystem {
     }
  //   isSpeedMode = true;
     motorsRight.SetReverseMode(true);
-    shifter = new DoubleSolenoid(11, RobotMap.portShifterForward, RobotMap.portShifterReverse);
-    isOpenShifter = false;
     isReverseMode = false;
 }
 
 public void Set_K_P(double K_P){
   motorsLeft.ConfigKP(K_P);
+  motorsRight.ConfigKP(K_P);
 }
 
 public void Set_K_I(double K_I){
   motorsLeft.ConfigKI(K_I);
+  motorsRight.ConfigKI(K_I);
 }
+
+public void Set_K_D(double K_D){
+  motorsLeft.ConfigKD(K_D);
+  motorsRight.ConfigKD(K_D);
+}
+public void Set_K_F(double K_F){
+  motorsLeft.ConfigKF(K_F);
+  motorsRight.ConfigKF(K_F);
+}
+
 
 public boolean HaveActiveCommand()
 {
@@ -128,10 +140,23 @@ public void GyroReset(){
    if(!isReverseMode){
     motorsRight.setValue(right);
     motorsLeft.setValue(left);
+    System.out.println("reverse mode: false");
    }
    else{
-    motorsRight.setValue(right * -1);
-    motorsLeft.setValue(left * -1);
+    motorsRight.setValue(-left);
+    motorsLeft.setValue(-right);
+    System.out.println("reverse mode: true");
+   }
+ }
+
+ public void SetValue(int left, int right){
+  if(!isReverseMode){
+    motorsRight.setValue(right);
+    motorsLeft.setValue(left);
+   }
+   else{
+    motorsRight.setValue(-left);
+    motorsLeft.setValue(-right);
    }
  }
 
@@ -161,25 +186,28 @@ public double NormalizeAngle(double angle){
    }
 }
 
-public void OpenShifter(){
+public void setSlowMode(){
   shifter.set(DoubleSolenoid.Value.kForward);
-  isOpenShifter = false;
+  in_fast_mode = false;
+  max_speed = GroupOfMotors.MAX_SPEED_SLOW / GroupOfMotors.PULSE_DIS;
+  motorsLeft.SetSlow();
+  motorsRight.SetSlow();
 }
 
-public void CloseShifter(){
+public void setFastMode() { // CloseShifter(){
   shifter.set(DoubleSolenoid.Value.kReverse);
-  isOpenShifter = true;
+  in_fast_mode = true;
+  max_speed = GroupOfMotors.MAX_SPEED_FAST / GroupOfMotors.PULSE_DIS;
+  motorsLeft.SetFast();
+  motorsRight.SetFast();
 }
 
-public void ChangeShifter(boolean open){
-  if(open){
-    (new OpenShifter()).start();
+public void ChangeShifter(boolean slow) { // boolean open){
+  if(slow){
+    setSlowMode();
+  } else {
+    setFastMode();
   }
-  else{
-    (new CloseShifter()).start();
-  }
-isOpenShifter = !isOpenShifter;
-
 }
 
 public void offShifter(){
@@ -194,6 +222,7 @@ public void resetEncs(){
   motorsLeft.ResetEnc();
   motorsRight.ResetEnc();
 }
+
 
   @Override
   public void initDefaultCommand() {
