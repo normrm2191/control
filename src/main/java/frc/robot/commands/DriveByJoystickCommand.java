@@ -36,7 +36,7 @@ public class DriveByJoystickCommand extends Command {
       double rValue = Math.abs(rightJoystickValue) * rightJoystickValue;
       lValue = Math.abs(lValue)<MIN_JS_VALUE ? 0 : lValue;
       rValue = Math.abs(rValue)<MIN_JS_VALUE ? 0 : rValue;
-      Robot.chassis.SetValue(lValue, rValue);
+      Robot.chassis.motorsSetValue(lValue, rValue);
     }
   
 

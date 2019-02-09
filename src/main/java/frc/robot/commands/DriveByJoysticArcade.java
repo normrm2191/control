@@ -36,7 +36,7 @@ public class DriveByJoysticArcade extends Command {
     if(rightSpeed < -1) rightSpeed = -1;
     if(rightSpeed > 1) rightSpeed = 1;
     System.out.println("drive: " + x + " " + y + " - " + leftSpeed + "/" + rightSpeed);
-    Robot.chassis.SetValue(leftSpeed,rightSpeed);
+    Robot.chassis.motorsSetValue(leftSpeed,rightSpeed);
   }
 
   // Make this return true when this Command no longer needs to run execute()

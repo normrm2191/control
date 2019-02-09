@@ -77,7 +77,7 @@ public class TurnByDegrees extends Command {
 			velocity -= 0;
 		}*/
 		System.out.println("Turn to " + angle + " velocity = " + velocity);
-		Robot.chassis.SetValue(velocity,-velocity);
+		Robot.chassis.SetSpeed(velocity,-velocity);
 	}
 
 

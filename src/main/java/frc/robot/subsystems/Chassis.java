@@ -136,27 +136,25 @@ public void GyroReset(){
   
 }
 
- public void SetValue(double left, double right){
+ public void motorsSetValue(double left, double right){
    if(!isReverseMode){
     motorsRight.setValue(right);
     motorsLeft.setValue(left);
-    System.out.println("reverse mode: false");
    }
    else{
     motorsRight.setValue(-left);
     motorsLeft.setValue(-right);
-    System.out.println("reverse mode: true");
-   }
+     }
  }
 
- public void SetValue(int left, int right){
+ public void SetSpeed(double Lspeed, double Rspeed){
   if(!isReverseMode){
-    motorsRight.setValue(right);
-    motorsLeft.setValue(left);
+    motorsRight.setSpeed(Rspeed);
+    motorsLeft.setSpeed(Lspeed);
    }
    else{
-    motorsRight.setValue(-left);
-    motorsLeft.setValue(-right);
+    motorsRight.setSpeed(-Lspeed);
+    motorsLeft.setSpeed(-Rspeed);
    }
  }
 

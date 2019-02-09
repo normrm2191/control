@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     Robot.chassis.resetEncs();
     chassis.setSlowMode();
-    m_autonomousCommand = new TurnByDegrees(40,200);
+    m_autonomousCommand = new GoStraight(420, 1000);//new TurnByDegrees(40,200);
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
      * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand

@@ -21,13 +21,14 @@ public class GroupOfMotors {
     public static final double K_P = 1.0 / 5.0;
     public static final double K_I = 0;
     public static final double K_D = 0;
-    public static final double MAX_POWER_FOR_MAX_SPEED_SLOW = 1023 * 0.33; // 1/3 power
-    public static final double MAX_POWER_FOR_MAX_SPEED_FAST = 1023 * 0.5; // 1/2 power
+    public static final double MAX_POWER_FOR_MAX_SPEED_SLOW = 1023 * 0.5; // 1/3 power
+    public static final double MAX_POWER_FOR_MAX_SPEED_FAST = 1023 * 0.8; // 1/2 power
     public static final double PULSE_DIS=0.116;
-    public static final double MAX_SPEED_SLOW =250;
-    public static final double MAX_SPEED_FAST =700;
-    public static final double K_F_FAST = MAX_POWER_FOR_MAX_SPEED_FAST * PULSE_DIS / MAX_SPEED_FAST;
-    public static final double K_F_SLOW = MAX_POWER_FOR_MAX_SPEED_SLOW * PULSE_DIS / MAX_SPEED_SLOW;
+    public static final double SPEED_TO_TALON_SPEED = 0.1 / PULSE_DIS;
+    public static final double MAX_SPEED_SLOW =2500;
+    public static final double MAX_SPEED_FAST =7000;
+    public static final double K_F_FAST = MAX_POWER_FOR_MAX_SPEED_FAST / (MAX_SPEED_FAST * SPEED_TO_TALON_SPEED);
+    public static final double K_F_SLOW = MAX_POWER_FOR_MAX_SPEED_SLOW / (MAX_SPEED_SLOW * SPEED_TO_TALON_SPEED);
     public double baseEncoder=0;
 
 
@@ -43,6 +44,14 @@ public class GroupOfMotors {
     //    motor2.config_kI(0, K_I,0);
         motor1.config_kD(0, K_D,0);
     //    motor2.config_kD(0, K_D,0);
+        motor1.configClosedloopRamp(0.5);
+        motor1.configContinuousCurrentLimit(40);
+        motor1.configPeakCurrentDuration(100);
+        motor1.enableCurrentLimit(true);
+        /*motor2.configClosedloopRamp(0.5);
+        motor2.configContinuousCurrentLimit(40);
+        motor2.configPeakCurrentDuration(100);
+        motor2.enableCurrentLimit(true);*/
         isSpeedMode = true;
         reverse = 1;
         if(in_fast_mode) {
@@ -69,14 +78,14 @@ public class GroupOfMotors {
 
     public void setValue(double value){
         if(Robot.driverInterface.isSpeedMode){
-            motor1.set(ControlMode.Velocity, reverse * Robot.chassis.max_speed * value);
-        }else{
+            setSpeed(value * Robot.chassis.max_speed);
+                }else{
             motor1.set(ControlMode.PercentOutput, reverse * value);
         }
     }
 
-    public void setValue(int speed){
-        motor1.set(ControlMode.Velocity, reverse * speed / PULSE_DIS);
+    public void setSpeed(double speed){
+        motor1.set(ControlMode.Velocity, reverse * speed * SPEED_TO_TALON_SPEED);
     }
 
     public void StopMotors(){

@@ -28,6 +28,7 @@ public class GoStraight extends Command {
   public static final double K_I = K_P / 100;
   public static final double K_D = 0;
   public static final int FINAL_DISTANCE = 500;
+  public static final double MIN_SPEED = 300;
   
   public GoStraight(double distance,double speed) {
     this(distance,speed,true,-1);    
@@ -39,7 +40,7 @@ public class GoStraight extends Command {
     this(distance, speed,stopAtEnd,-1);
   }
   public GoStraight(double distance,double speed,boolean stopAtEnd,long maxTime){
-    maxSpeed=speed;
+    maxSpeed=speed * 2;
     this.maxTime=maxTime;
     this.distance=distance;
     this.speed=speed;
@@ -79,7 +80,10 @@ public class GoStraight extends Command {
       double local_speed = speed;
       remaining();
       if(remain < FINAL_DISTANCE && stopAtEnd){
-        local_speed = speed * 0.6 * remain / FINAL_DISTANCE;
+        local_speed = speed  * remain / FINAL_DISTANCE;
+      }
+      if(local_speed < MIN_SPEED) {
+        local_speed = MIN_SPEED;
       }
         double angle = Robot.chassis.GetAngle();
         double error = angle - gyroStartValue;
@@ -116,12 +120,10 @@ public class GoStraight extends Command {
                   "/ left speed = " + leftSpeed +
                   "/ right speed = " + rightSpeed );
         if(direction > 0){
-          Robot.chassis.motorsLeft.setValue(leftSpeed);
-          Robot.chassis.motorsRight.setValue(rightSpeed);
+          Robot.chassis.SetSpeed(leftSpeed, rightSpeed);
         }
         else{
-          Robot.chassis.motorsLeft.setValue(-rightSpeed);
-          Robot.chassis.motorsRight.setValue(-leftSpeed);
+          Robot.chassis.SetSpeed(-rightSpeed, -leftSpeed);
         }
       
     }
@@ -141,9 +143,9 @@ protected void remaining(){
       return true;
     }
     if(direction > 0){
-      return (distance - Robot.chassis.GetDistance()) < 50;
+      return (distance - Robot.chassis.GetDistance()) < 5;
     }else{
-      return(distance-Robot.chassis.GetDistance())>-50;
+      return(distance-Robot.chassis.GetDistance())>-5;
 
     }
   }
@@ -155,7 +157,7 @@ protected void remaining(){
     "/" + (int)(Robot.chassis.motorsRight.GetPositionInMM())+" angle= "+(int)(Robot.chassis.GetAngle())+ 
      " remain = "+ remain);
      if(stopAtEnd){
-       Robot.chassis.SetValue(-0.1 , -0.1);
+       Robot.chassis.SetSpeed(0 , 0);
      }
      Robot.chassis.SetCommand(null);
   }

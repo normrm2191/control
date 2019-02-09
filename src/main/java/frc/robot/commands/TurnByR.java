@@ -74,7 +74,7 @@ public class TurnByR extends Command {
         SetSpeed(-minSpeed);
       }
     }
-    Robot.chassis.SetValue(leftSpeed, rightSpeed);
+    Robot.chassis.SetSpeed(leftSpeed, rightSpeed);
   }
 
   // Make this return true when this Command no longer needs to run execute()
