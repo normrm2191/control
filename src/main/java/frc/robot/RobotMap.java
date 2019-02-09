@@ -14,11 +14,16 @@ package frc.robot;
  * floating around.
  */
 public class RobotMap {
+  //chassis
+  public static int portMotor1Left=3;
+  public static int portMotor2Left=2;
+  public static int portMotor1Right=4;
+  public static int portMotor2Right=1;
 
-  static public int portMotor1Left=3;
-  static public int portMotor2Left=2;
-  static public int portMotor1Right=4;
-  static public int portMotor2Right=1;
+  //climb
+  public static int portClimbMotorTop;
+  public static int portClimbMotorBack;
+  public static int portClimbMoveMotor;
 
   static public int portSwitchMotor = 0;
 

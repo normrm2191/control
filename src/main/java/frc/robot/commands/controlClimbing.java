@@ -7,18 +7,15 @@
 
 package frc.robot.commands;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.subsystems.DriverInterface;
+import frc.robot.subsystems.Climb;
 
-public class DriveByJoystickCommand extends Command {
-
-  public static final double MIN_JS_VALUE = 0.2;
-
-  public DriveByJoystickCommand() {
-    
-    
+public class controlClimbing extends Command {
+  public controlClimbing() {
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
@@ -29,16 +26,14 @@ public class DriveByJoystickCommand extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    
-      double leftJoystickValue = -Robot.driverInterface.joystickLeft.getY();   
-      double rightJoystickValue = -Robot.driverInterface.joystickRight.getY();
-      leftJoystickValue = Math.abs(leftJoystickValue)<MIN_JS_VALUE ? 0 : leftJoystickValue;
-      rightJoystickValue = Math.abs(rightJoystickValue)<MIN_JS_VALUE ? 0 : rightJoystickValue;
-      double lValue = Math.abs(leftJoystickValue) * leftJoystickValue;
-      double rValue = Math.abs(rightJoystickValue) * rightJoystickValue;
-      Robot.chassis.motorsSetValue(lValue, rValue);
-    }
-  
+    double move_value = Robot.driverInterface.joystickLeft.getRawAxis(3);
+    double lift_value = Robot.driverInterface.joystickRight.getRawAxis(3);
+    move_value = (move_value + 1) / 2;
+    lift_value = (lift_value + 1) / 2;
+    Robot.climb.setValue_moveMotor(move_value);
+    Robot.climb.setValue_liftMotorBot(lift_value);
+    Robot.climb.setValue_liftMotorTop(lift_value);
+  }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
@@ -55,6 +50,5 @@ public class DriveByJoystickCommand extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.chassis.motorsSetValue(0,0);
   }
 }

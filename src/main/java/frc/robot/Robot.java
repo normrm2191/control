@@ -28,7 +28,7 @@ import frc.robot.subsystems.DriverInterface;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HatchPanelsSystem;
 import frc.robot.subsystems.Lift;
-
+import frc.robot.subsystems.Climb;
 
 public class Robot extends TimedRobot {
   public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
@@ -39,6 +39,7 @@ public class Robot extends TimedRobot {
   public static HatchPanelsSystem hatchPanelsSystem;
   public static Command teleopCommand;
   public static Compressor compressor;
+  public static Climb climb;
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
@@ -60,8 +61,9 @@ public class Robot extends TimedRobot {
     hatchPanelsSystem = new HatchPanelsSystem();
     SmartDashboard.setDefaultNumber("K_P", 0.15);
     SmartDashboard.setDefaultNumber("K_I", 0.001);
+    climb = new Climb();
     //  hatchPanelsSystem = new HatchPanelsSystem();
-//    lift= new Lift();
+    //lift= new Lift();
   }
 
   @Override
@@ -91,7 +93,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     Robot.chassis.resetEncs();
     chassis.setSlowMode();
-    m_autonomousCommand = new GoStraight(420, 1000);//new TurnByDegrees(40,200);
+    m_autonomousCommand = new TurnByDegrees(-60,150);
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
      * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -123,8 +125,6 @@ public class Robot extends TimedRobot {
     chassis.gyro.calibrate();
     compressor.start();
     chassis.Set_K_P(k_p);
-    System.out.println("K_P = " + k_p);
-    System.out.println("K_I = " + k_i);
     chassis.setFastMode();
     //chassis.Set_K_I(k_i);
     teleopCommand.start();

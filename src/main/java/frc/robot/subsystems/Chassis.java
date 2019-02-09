@@ -137,6 +137,7 @@ public void GyroReset(){
 }
 
  public void motorsSetValue(double left, double right){
+   System.out.println("left: " + left + "right: " + right);
    if(!isReverseMode){
     motorsRight.setValue(right);
     motorsLeft.setValue(left);

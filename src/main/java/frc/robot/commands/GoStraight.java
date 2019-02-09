@@ -159,7 +159,7 @@ protected void remaining(){
      if(stopAtEnd){
        Robot.chassis.SetSpeed(0 , 0);
      }
-     Robot.chassis.SetCommand(null);
+     Robot.chassis.SetCommand(null);;
   }
 
   // Called when another command which requires one or more of the same

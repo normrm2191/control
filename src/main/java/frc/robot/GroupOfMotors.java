@@ -85,6 +85,7 @@ public class GroupOfMotors {
     }
 
     public void setSpeed(double speed){
+        System.out.println("speed = " + reverse * speed * SPEED_TO_TALON_SPEED);
         motor1.set(ControlMode.Velocity, reverse * speed * SPEED_TO_TALON_SPEED);
     }
 
