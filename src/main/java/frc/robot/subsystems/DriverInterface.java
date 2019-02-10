@@ -35,12 +35,6 @@ public class DriverInterface extends Subsystem {
       isSpeedMode= true;
     }
 
-    public void ChangeMode(boolean isSpeedMode)
-    {
-        this.isSpeedMode = isSpeedMode;
-        Robot.chassis.SetSpeedMode(isSpeedMode);
-    }
-
     public void Reset(){
       Robot.chassis.motorsLeft.ResetEnc();
       Robot.chassis.motorsRight.ResetEnc();

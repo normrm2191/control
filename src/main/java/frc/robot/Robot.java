@@ -27,8 +27,7 @@ import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.DriverInterface;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HatchPanelsSystem;
-import frc.robot.subsystems.Lift;
-import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Climb;;
 
 public class Robot extends TimedRobot {
   public static ExampleSubsystem m_subsystem = new ExampleSubsystem();
@@ -71,8 +70,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("angle", chassis.GetAngle());
     k_p = SmartDashboard.getNumber("K_P", 1/15);
     k_i = SmartDashboard.getNumber("K_I", 0.0017);
-    SmartDashboard.putNumber("encode right", Robot.chassis.motorsRight.GetPositionInMM());
-    SmartDashboard.putNumber("encode left", Robot.chassis.motorsLeft.GetPositionInMM());
+    SmartDashboard.putNumber("encode right", Robot.chassis.getRightDistance());
+    SmartDashboard.putNumber("encode left", Robot.chassis.getLeftDistance());
   }
 
   @Override

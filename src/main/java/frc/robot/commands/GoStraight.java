@@ -110,8 +110,8 @@ public class GoStraight extends Command {
           rightSpeed = maxSpeed;
         }
         System.out.println(
-                  "r enc = " + Robot.chassis.motorsRight.GetPositionInMM() +
-                  "l enc = " + Robot.chassis.motorsLeft.GetPositionInMM() +
+                  "r enc = " + Robot.chassis.getRightDistance() +
+                  "l enc = " + Robot.chassis.getLeftDistance() +
                   "remaining = " + remain + 
                   "/ angle = " + angle + 
                   "/ local speed = " + local_speed +
@@ -153,8 +153,8 @@ protected void remaining(){
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    System.out.println("GoStright End:Encoder +"+(int)(Robot.chassis.motorsLeft.GetPositionInMM()) + 
-    "/" + (int)(Robot.chassis.motorsRight.GetPositionInMM())+" angle= "+(int)(Robot.chassis.GetAngle())+ 
+    System.out.println("GoStright End:Encoder +"+(int)(Robot.chassis.getLeftDistance()) + 
+    "/" + (int)(Robot.chassis.getRightDistance())+" angle= "+(int)(Robot.chassis.GetAngle())+ 
      " remain = "+ remain);
      if(stopAtEnd){
        Robot.chassis.SetSpeed(0 , 0);

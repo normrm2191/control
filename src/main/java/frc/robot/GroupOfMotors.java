@@ -76,21 +76,21 @@ public class GroupOfMotors {
         motor1.config_kF(0, k_f, 0);
     }
 
-    public void setValue(double value){
+    public void _setValue(double value){
         if(Robot.driverInterface.isSpeedMode){
-            setSpeed(value * Robot.chassis.max_speed);
-                }else{
+            _setSpeed(value * Robot.chassis.max_speed);
+        }else{
             motor1.set(ControlMode.PercentOutput, reverse * value);
         }
     }
 
-    public void setSpeed(double speed){
+    public void _setSpeed(double speed){
         System.out.println("speed = " + reverse * speed * SPEED_TO_TALON_SPEED);
         motor1.set(ControlMode.Velocity, reverse * speed * SPEED_TO_TALON_SPEED);
     }
 
     public void StopMotors(){
-        setValue(0);
+        _setValue(0);
     }
 
     public void ResetEnc(){
@@ -99,17 +99,17 @@ public class GroupOfMotors {
     public double GetAbsPosition(){
         return motor1.getSelectedSensorPosition();
     }
-    public double GetPosition(){
+    public double _GetPosition(){
         int reverseMode = Robot.chassis.isReverseMode ? -1 : 1;
-        return reverse * (GetAbsPosition()-baseEncoder) * reverseMode;
+        return reverse * (GetAbsPosition()-baseEncoder);
     }
-    public double GetPositionInMM(){
-        return GetPosition()*PULSE_DIS;
+    public double _GetPositionInMM(){
+        return _GetPosition()*PULSE_DIS;
     }
     public void SetReverseMode(Boolean reverseMoode){
         reverse= reverseMoode? -1 : 1;
     }
-    public void SetSpeedMode(boolean isSpeedMode)
+    public void _SetSpeedMode(boolean isSpeedMode)
     {
         this.isSpeedMode = isSpeedMode;
     }

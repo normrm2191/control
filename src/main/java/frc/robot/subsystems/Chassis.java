@@ -139,38 +139,61 @@ public void GyroReset(){
  public void motorsSetValue(double left, double right){
    System.out.println("left: " + left + "right: " + right);
    if(!isReverseMode){
-    motorsRight.setValue(right);
-    motorsLeft.setValue(left);
+    motorsRight._setValue(right);
+    motorsLeft._setValue(left);
    }
    else{
-    motorsRight.setValue(-left);
-    motorsLeft.setValue(-right);
+    motorsRight._setValue(-left);
+    motorsLeft._setValue(-right);
      }
  }
 
  public void SetSpeed(double Lspeed, double Rspeed){
   if(!isReverseMode){
-    motorsRight.setSpeed(Rspeed);
-    motorsLeft.setSpeed(Lspeed);
+    motorsRight._setSpeed(Rspeed);
+    motorsLeft._setSpeed(Lspeed);
    }
    else{
-    motorsRight.setSpeed(-Lspeed);
-    motorsLeft.setSpeed(-Rspeed);
+    motorsRight._setSpeed(-Lspeed);
+    motorsLeft._setSpeed(-Rspeed);
    }
  }
 
-public void SetSpeedMode(boolean isSpeedMode){
-  motorsLeft.SetSpeedMode(isSpeedMode);
-  motorsRight.SetSpeedMode(isSpeedMode);
+
+ public void _SetSpeedMode(boolean isSpeedMode){
+  motorsLeft._SetSpeedMode(isSpeedMode);
+  motorsRight._SetSpeedMode(isSpeedMode);
 }
 
 public void StopMotors(){
-  motorsRight.StopMotors();
+   motorsRight.StopMotors();
    motorsLeft.StopMotors();
 }
 
-public double GetDistance(){
-  return(motorsLeft.GetPositionInMM()+motorsRight.GetPositionInMM())/2;
+public double GetDistance() {
+  double r = motorsLeft._GetPositionInMM() + motorsRight._GetPositionInMM();
+  r = r/2;
+  if(isReverseMode) {
+    return -r;
+  } else {
+    return r;
+  }
+}
+
+public double getLeftDistance() {
+  if(isReverseMode) {
+    return -motorsRight._GetPositionInMM();
+  } else {
+    return motorsLeft._GetPositionInMM();
+  }
+}
+
+public double getRightDistance() {
+  if(isReverseMode) {
+    return -motorsLeft._GetPositionInMM();
+  } else {
+    return motorsRight._GetPositionInMM();
+  }
 }
 
 public double NormalizeAngle(double angle){
