@@ -18,7 +18,7 @@ public class SocketHandlerTask extends Thread {
     VisionData visionData;
 
     public SocketHandlerTask(Socket socket) {
-        supper();]
+        super();
         this.socket = socket;
         gson = new Gson();
         parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
