@@ -36,4 +36,7 @@ public class RobotMap {
   public static int BUTTON_UP=3;
 
   public static int BUTTON_SHIFTER = 1;
+
+  public static final int CAN_GYRO_PORT = 11;
+  public static final boolean USE_CAN_GYRO = false;
 }

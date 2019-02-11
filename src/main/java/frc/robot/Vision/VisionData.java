@@ -1,17 +1,26 @@
 package frc.robot.Vision;
 
+import edu.wpi.first.wpilibj.SendableBase;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class VisionData {
 
     // contains the data from the Rasbery Pie
 
 
-    public static final VisionData fronData = new VisionData();
-    public static final VisionData backData = new VisionData();
+    public static VisionData fronData = new VisionData();
+    public static VisionData backData = new VisionData();
 
 
-    class point {
+    class point extends SendableBase {
         public double a; // angle
         public double d; // distance
+
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            
+		}
     }
 
     public point p1;
@@ -22,9 +31,12 @@ public class VisionData {
 
     public void set() {
         time = System.currentTimeMillis();
+        double[] pts = {p1.a,p1.d,p2.a,p2.d};
         if(front) {
             fronData = this;
+            SmartDashboard.putNumberArray("front: points", pts );
         } else {
+            SmartDashboard.putNumberArray("back: points", pts );
             backData = this;
         }
     }

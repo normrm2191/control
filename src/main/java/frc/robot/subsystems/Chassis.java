@@ -8,6 +8,8 @@
 package frc.robot.subsystems;
 
 
+import com.ctre.phoenix.sensors.PigeonIMU;
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Command;
@@ -24,6 +26,7 @@ public class Chassis extends Subsystem {
   public GroupOfMotors motorsRight;
   public GroupOfMotors motorsLeft;
   public ADXRS450_Gyro gyro = null;
+  public PigeonIMU gyro1 = null;
   public Command activeDriveCommand= null;
   public CommandGroup activeDriveCommandGroup= null;
   private double calibrateStartTime = 0;
@@ -34,6 +37,8 @@ public class Chassis extends Subsystem {
   public boolean isReverseMode;
   public double max_speed;
   public boolean in_fast_mode = false;
+
+  public static final double WHEEL_BASE = 600;
 //  public boolean isSpeedMode;
 
   public Chassis(){
@@ -46,8 +51,12 @@ public class Chassis extends Subsystem {
     motorsRight= new GroupOfMotors(3, RobotMap.portMotor2Right, in_fast_mode);
     motorsLeft= new GroupOfMotors(2, RobotMap.portMotor2Left, in_fast_mode);
     try{
-      gyro= new ADXRS450_Gyro();
-      gyro.calibrate();
+      if(RobotMap.USE_CAN_GYRO) {
+        gyro1 = new PigeonIMU(RobotMap.CAN_GYRO_PORT);
+      } else{
+        gyro= new ADXRS450_Gyro();
+        gyro.calibrate();
+      }
     }
     catch(Exception e){
       gyro= null;
@@ -159,11 +168,6 @@ public void GyroReset(){
    }
  }
 
-
- public void _SetSpeedMode(boolean isSpeedMode){
-  motorsLeft._SetSpeedMode(isSpeedMode);
-  motorsRight._SetSpeedMode(isSpeedMode);
-}
 
 public void StopMotors(){
    motorsRight.StopMotors();
