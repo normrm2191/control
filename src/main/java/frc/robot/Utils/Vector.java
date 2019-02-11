@@ -2,11 +2,12 @@ package frc.robot.Utils;
 
 
 public class Vector {
-    public double angle; // in rad
+    public double angle; // in dig
     public double length; // in mm
 
     public Vector(double angle, double length) {
-        this.angle = Math.toRadians(angle);
+     //   this.angle = Math.toRadians(angle);
+     this.angle = angle;
         this.length = length;
     }
     public Vector() {
@@ -112,7 +113,7 @@ public class Vector {
     }
 
    public static Vector ConvertToVector(VectorPoint p){
-       double angle = Math.abs(Math.atan(p.y/p.x));
+       double angle = Math.abs(Math.atan(p.x/p.y) * 180 / Math.PI);
        angle = p.x > 0 ? angle : -angle;
        return new Vector(angle, Math.sqrt(Math.pow(p.x,2)+Math.pow(p.y,2)));
 

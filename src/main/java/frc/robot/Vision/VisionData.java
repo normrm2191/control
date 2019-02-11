@@ -23,9 +23,9 @@ public class VisionData {
     public void set() {
         time = System.currentTimeMillis();
         if(front) {
-            fronData = this;
+       //     fronData = this;
         } else {
-            backData = this;
+       //     backData = this;
         }
     }
 

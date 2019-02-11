@@ -46,8 +46,15 @@ public class VectorPoint {
     }
     public static VectorPoint convertToPoint(Vector v){
         VectorPoint p = new VectorPoint();
-        p.x=v.length*Math.cos(v.angle)  ;
-        p.y=v.length*Math.sin(v.angle);
+        double normalizeAngle = Math.abs(v.angle)> 90 ? 180- Math.abs(v.angle) : Math.abs(v.angle);
+        p.x=v.length*Math.sin(normalizeAngle * Math.PI / 180);
+        p.y=v.length*Math.cos(normalizeAngle * Math.PI / 180);
+        if(v.angle<0){
+            p.x = -p.x;
+        }
+        if(Math.abs(v.angle) > 90 ){
+            p.y = -p.y;
+        }
         return p;
         
      }
@@ -76,10 +83,11 @@ public class VectorPoint {
         return new VectorPoint(v1.x - v2.x, v1.y - v2.y);
     }
     public static double GetAngleOfVector(VectorPoint v){
-        return Math.atan(v.y/v.x);
+        return Math.atan(v.x/v.y) * 180 / Math.PI;
     }
     public double GetAngleOfVector(){
-        return Math.atan(y/x);
+        return Math.atan(x/y) * 180 / Math.PI;
+         
     }
     public static double GetLengthOfVector(VectorPoint p){
         return Math.sqrt(Math.pow(p.y, 2)+Math.pow(p.x,2));

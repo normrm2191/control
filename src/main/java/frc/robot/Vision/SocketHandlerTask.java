@@ -21,7 +21,7 @@ public class SocketHandlerTask extends Thread {
         super();
         this.socket = socket;
         gson = new Gson();
-        parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
+  //      parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
         start();
     }
 
@@ -44,5 +44,4 @@ public class SocketHandlerTask extends Thread {
             }
         }
     }
-
-}
+  }}
