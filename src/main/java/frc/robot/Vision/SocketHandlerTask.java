@@ -22,11 +22,15 @@ public class SocketHandlerTask extends Thread {
         super();
         this.socket = socket;
         gson = new Gson();
+<<<<<<< HEAD
         try{
         parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
         }catch(IOException e){
             e.printStackTrace();
         }
+=======
+  //      parser = new JsonStreamParser(new InputStreamReader(socket.getInputStream()));
+>>>>>>> arcade_mode
         start();
     }
 
@@ -50,4 +54,8 @@ public class SocketHandlerTask extends Thread {
             }
         }
     }
+<<<<<<< HEAD
 }
+=======
+  }}
+>>>>>>> arcade_mode
