@@ -30,9 +30,10 @@ public class controlClimbing extends Command {
     double lift_value = Robot.driverInterface.joystickRight.getRawAxis(3);
     move_value = (move_value + 1) / 2;
     lift_value = (lift_value + 1) / 2;
+    System.out.println("move value: " + move_value + "/ lift value: " + lift_value);
     Robot.climb.setValue_moveMotor(move_value);
     Robot.climb.setValue_liftMotorBot(lift_value);
-    Robot.climb.setValue_liftMotorTop(lift_value);
+    Robot.climb.setValue_liftMotorTop(-lift_value);
   }
 
   // Make this return true when this Command no longer needs to run execute()

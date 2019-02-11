@@ -15,17 +15,17 @@ package frc.robot;
  */
 public class RobotMap {
   //chassis
-  public static int portMotor1Left=3;
+  public static int portMotor1Left=1;
   public static int portMotor2Left=2;
-  public static int portMotor1Right=4;
-  public static int portMotor2Right=1;
+  public static int portMotor1Right=3;
+  public static int portMotor2Right=4;
 
   //climb
-  public static int portClimbMotorTop;
-  public static int portClimbMotorBack;
-  public static int portClimbMoveMotor;
+  public static int portClimbMotorFront = 5;
+  public static int portClimbMotorBack = 6;
+  public static int portClimbMoveMotor = 7;
 
-  static public int portSwitchMotor = 0;
+  static public int portArmMotor = 8;
 
   public static int portShifterForward = 0;
   public static int portShifterReverse = 1;
@@ -37,6 +37,6 @@ public class RobotMap {
 
   public static int BUTTON_SHIFTER = 1;
 
-  public static final int CAN_GYRO_PORT = 11;
-  public static final boolean USE_CAN_GYRO = false;
+  public static final int CAN_GYRO_PORT = 21;
+  public static final boolean USE_CAN_GYRO = true;
 }

@@ -9,10 +9,12 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.OpenShifter;
+import frc.robot.commands.controlClimbing;
 
 /**
  * Add your docs here.
@@ -24,9 +26,8 @@ public class DriverInterface extends Subsystem {
     public Joystick joystickRight;
     public Joystick Bottom_Button ;
     public Joystick Botton_Forward ;
-    public XboxController xbox;
-    public boolean isSpeedMode;
-    
+    public XboxController xbox; 
+    public boolean isSpeedMode;    
     
     public DriverInterface(){
       joystickRight=new Joystick(2);

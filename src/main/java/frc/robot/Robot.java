@@ -7,22 +7,18 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.CloseShifter;
-import frc.robot.commands.DriveByJoysticArcade;
 import frc.robot.commands.DriveByJoystickCommand;
 import frc.robot.commands.ExampleCommand;
-import frc.robot.commands.GoStraight;
-import frc.robot.commands.OpenShifter;
 import frc.robot.commands.TurnByDegrees;
+import frc.robot.commands.TurnByR;
+import frc.robot.commands.controlClimbing;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.DriverInterface;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -39,16 +35,18 @@ public class Robot extends TimedRobot {
   public static Command teleopCommand;
   public static Compressor compressor;
   public static Climb climb;
+  public data dataTest;
 
   Command m_autonomousCommand;
   SendableChooser<Command> m_chooser = new SendableChooser<>();
-
   double k_p;
   double k_i;
   
 
   @Override
   public void robotInit() {
+    dataTest = new data("null");
+    SmartDashboard.putData(dataTest);
     robot = this;
     chassis= new Chassis();
     driverInterface= new DriverInterface();
@@ -56,10 +54,12 @@ public class Robot extends TimedRobot {
     // chooser.addOption("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", m_chooser);
     teleopCommand = new DriveByJoystickCommand();
-    compressor = new Compressor(11);
+    //compressor = new Compressor(11);
     hatchPanelsSystem = new HatchPanelsSystem();
     SmartDashboard.setDefaultNumber("K_P", 0.15);
     SmartDashboard.setDefaultNumber("K_I", 0.001);
+    SmartDashboard.setDefaultNumber("degrees", 0.15);
+    SmartDashboard.setDefaultNumber("speed", 0.001);
     climb = new Climb();
     //  hatchPanelsSystem = new HatchPanelsSystem();
     //lift= new Lift();
@@ -91,8 +91,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     Robot.chassis.resetEncs();
+    Robot.chassis.GyroReset();
     chassis.setSlowMode();
-    m_autonomousCommand = new TurnByDegrees(-60,150);
+    m_autonomousCommand = new TurnByR(90, 60, 500);
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
      * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -111,8 +112,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Scheduler.getInstance().run();
-    
-
+    chassis.motorsLeft.PrintSpeed();
+    chassis.motorsRight.PrintSpeed();
   }
 
   @Override
@@ -120,20 +121,20 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    chassis.GyroReset();
+   /*chassis.GyroReset();
     chassis.gyro.calibrate();
     compressor.start();
-    chassis.Set_K_P(k_p);
     chassis.setFastMode();
-    //chassis.Set_K_I(k_i);
-    teleopCommand.start();
+    teleopCommand.start();*/
+    new controlClimbing().start();
   }
 
   @Override
   public void teleopPeriodic() {
     Scheduler.getInstance().run();
-    driverInterface.UpdateStatus();
-    hatchPanelsSystem.UpdateStatus();
+    /*driverInterface.UpdateStatus();
+    hatchPanelsSystem.UpdateStatus();*/
+    
   }
 
   @Override

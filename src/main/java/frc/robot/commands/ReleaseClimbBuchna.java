@@ -9,8 +9,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ReleaseLift extends Command {
-  public ReleaseLift() {
+public class ReleaseClimbBuchna extends Command {
+  public ReleaseClimbBuchna() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }

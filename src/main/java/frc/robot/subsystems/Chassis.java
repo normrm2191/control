@@ -42,12 +42,8 @@ public class Chassis extends Subsystem {
 //  public boolean isSpeedMode;
 
   public Chassis(){
-    shifter = new DoubleSolenoid(11,RobotMap.portShifterForward, RobotMap.portShifterReverse);
+    //shifter = new DoubleSolenoid(11,RobotMap.portShifterForward, RobotMap.portShifterReverse);
     max_speed = GroupOfMotors.MAX_SPEED_SLOW / GroupOfMotors.PULSE_DIS;
-    if(shifter.get() == DoubleSolenoid.Value.kReverse) {
-      in_fast_mode = true;
-      max_speed = GroupOfMotors.MAX_SPEED_FAST / GroupOfMotors.PULSE_DIS;
-    }
     motorsRight= new GroupOfMotors(3, RobotMap.portMotor2Right, in_fast_mode);
     motorsLeft= new GroupOfMotors(2, RobotMap.portMotor2Left, in_fast_mode);
     try{
@@ -111,7 +107,7 @@ public void DisableDriveCommand(){
 }
   
 public double GetAngle(){
-  return gyro.getAngle();
+  return 0;// gyro.getAngle();
 }
 
 public void SetCommand(Command cmd){

@@ -18,14 +18,15 @@ public class GroupOfMotors {
   //  public TalonSRX motor2;
     public double reverse;
     public boolean isSpeedMode;
+
     public static final double K_P = 1.0 / 5.0;
-    public static final double K_I = 0;
+    public static final double K_I = K_P / 50;
     public static final double K_D = 0;
     public static final double MAX_POWER_FOR_MAX_SPEED_SLOW = 1023 * 0.5; // 1/3 power
     public static final double MAX_POWER_FOR_MAX_SPEED_FAST = 1023 * 0.8; // 1/2 power
     public static final double PULSE_DIS=0.116;
     public static final double SPEED_TO_TALON_SPEED = 0.1 / PULSE_DIS;
-    public static final double MAX_SPEED_SLOW =2500;
+    public static final double MAX_SPEED_SLOW =2000;
     public static final double MAX_SPEED_FAST =7000;
     public static final double K_F_FAST = MAX_POWER_FOR_MAX_SPEED_FAST / (MAX_SPEED_FAST * SPEED_TO_TALON_SPEED);
     public static final double K_F_SLOW = MAX_POWER_FOR_MAX_SPEED_SLOW / (MAX_SPEED_SLOW * SPEED_TO_TALON_SPEED);
@@ -118,5 +119,14 @@ public class GroupOfMotors {
     }
     public void SetFast(){
         ConfigKF(K_F_FAST);
+    }
+
+    public void PrintSpeed(){
+        double v = motor1.getSensorCollection().getQuadratureVelocity();
+        double v1 = motor1.getSelectedSensorVelocity();
+        double t = motor1.getClosedLoopTarget();
+        double e = motor1.getClosedLoopError();
+        double p = motor1.getMotorOutputPercent();
+        System.out.println("v:" + v + "power: " + p + "  target: " + t + "   error: "  + e);
     }
 }

@@ -22,7 +22,7 @@ public class Climb extends Subsystem {
 
 public Climb()  {
   liftMotor_bot = new TalonSRX(RobotMap.portClimbMotorBack);
-  liftMotor_top = new TalonSRX(RobotMap.portClimbMotorTop);
+  liftMotor_top = new TalonSRX(RobotMap.portClimbMotorFront);
   move_motor = new TalonSRX(RobotMap.portClimbMoveMotor);
 }
 
