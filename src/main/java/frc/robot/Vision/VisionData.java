@@ -1,27 +1,26 @@
 package frc.robot.Vision;
 
 import edu.wpi.first.wpilibj.Sendable;
-import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class VisionData implements Sendable{
+public class VisionData implements Sendable {
 
     // contains the data from the Rasbery Pie
 
 
-    public static VisionData frontData = new VisionData();
-    public static VisionData backData = new VisionData();
+    public static VisionData frontData = new VisionData(true);
+    public static VisionData backData = new VisionData(false);
 
 
-    class point extends SendableBase {
+    public VisionData(boolean front){
+        this.front = front;
+    }
+
+    class point {
         public double a; // angle
         public double d; // distance
 
-        @Override
-        public void initSendable(SendableBuilder builder) {
-            
-		}
     }
 
     public point p1;
@@ -51,6 +50,22 @@ public class VisionData implements Sendable{
         }
     }
 
+    public boolean found() { 
+        return found;
+    }
+    public double a1() {
+        return p1.a;
+    }
+    public double d1() {
+        return p1.d;
+    }
+    public double a2() {
+        return p2.a;
+    }
+    public double d2() {
+        return p2.d;
+    }
+
     @Override
     public String getName() {
         return front ? "Front vision" : "Back vision";
@@ -71,9 +86,14 @@ public class VisionData implements Sendable{
 
     }
 
+
     @Override
     public void initSendable(SendableBuilder builder) {
-        //builder.addStringProperty(getName(), () -> , null);
+        String name = getName();
+        builder.addBooleanProperty(name + " Found", this::found, null);
+        builder.addDoubleProperty(name + " A1", this::a1, null);
+        builder.addDoubleProperty(name + " D1", this::d1, null);
+        builder.addDoubleProperty(name + " A2", this::a2, null);
+        builder.addDoubleProperty(name + " D2", this::d2, null);
     }
-
 }
