@@ -33,17 +33,11 @@ public class VisionData {
         time = System.currentTimeMillis();
         double[] pts = {p1.a,p1.d,p2.a,p2.d};
         if(front) {
-<<<<<<< HEAD
             fronData = this;
             SmartDashboard.putNumberArray("front: points", pts );
         } else {
             SmartDashboard.putNumberArray("back: points", pts );
             backData = this;
-=======
-       //     fronData = this;
-        } else {
-       //     backData = this;
->>>>>>> arcade_mode
         }
     }
 

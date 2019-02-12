@@ -24,6 +24,8 @@ public class HatchPanelsSystem extends Subsystem {
   public static final double K_I = 0;
   public static final double K_D = 0;
   public  final double CHANGE_DIR_MOVE = 100;
+  public static final double PULSE_DIS=0.116;
+
  
   public double encoderBase = 0;
   public boolean isforward;
@@ -57,9 +59,9 @@ public class HatchPanelsSystem extends Subsystem {
     motor.set(ControlMode.Velocity, value);
   }
 
-  public double GetPosition(){
-    return motor.getSelectedSensorPosition(0)-encoderBase;
-   }
+  public double GetPositionInMM(){
+    return (motor.getSelectedSensorPosition(0)- encoderBase) * PULSE_DIS;
+  }
 
    public void UpdateStatus(){
      if(changeDirCommand == null && Robot.driverInterface.joystickRight.getRawButtonPressed(3)){

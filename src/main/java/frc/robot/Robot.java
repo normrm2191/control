@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -23,6 +22,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.GoStraight;
 import frc.robot.commands.OpenShifter;
 import frc.robot.commands.TurnByDegrees;
+import frc.robot.commands.TurnByR;
 import frc.robot.subsystems.Chassis;
 import frc.robot.subsystems.DriverInterface;
 import frc.robot.subsystems.ExampleSubsystem;
@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     Robot.chassis.resetEncs();
     chassis.setSlowMode();
-    m_autonomousCommand = new TurnByDegrees(-60,150);
+    m_autonomousCommand = new TurnByR(60, 150, 200);
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
      * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand

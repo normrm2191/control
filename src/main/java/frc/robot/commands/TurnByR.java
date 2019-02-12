@@ -13,57 +13,58 @@ import frc.robot.Robot;
 
 public class TurnByR extends Command {
 
-	double K_P;
+/*	double K_P;
   static final double K_I = 0.0;
-	static final double K_D = 0.0;
-	double widthChassis;
-	static double FULL_CIRCLE = Math.PI * Robot.chassis.WHEEL_BASE; // Wheel Base is the Diameter
-	static double MM_PER_DEGREE = FULL_CIRCLE / 360;
-	static double VELOCITY = MM_PER_DEGREE / 10;
+	static final double K_D = 0.0; */
+	double wheelBase;
+	static double FULL_CIRCLE; // Wheel Base is the Diameter
+	static double MM_PER_DEGREE;
+	static double VELOCITY;
 	static double FINAL_ANGLE = 30;
 	public double targetAngle;
 	public double angle;
-	double error;
+/*	double error;
 	double lastError;
 	double sumError;
-	double lastSetPosition;
+	double lastSetPosition; */
 	double speedAngle;
-	double maxSpeedAngle;
+//	double maxSpeedAngle;  
 	double currAngle;
-	double p;
+/*	double p;
 	double i;
 	double d;
-	long _startTime;
+	long _startTime; */
 
 	double r;
 	double left_speed;
 	double right_speed;
+	int loop;
 
 
   public TurnByR(double angle , double speedAngle, double r) {
 		this.angle = angle;
-		K_P = 1 / FINAL_ANGLE;
-		maxSpeedAngle = speedAngle;
-		widthChassis = Robot.chassis.WHEEL_BASE;
+//		K_P = 1 / FINAL_ANGLE;
+		this.speedAngle = speedAngle;
+		wheelBase = Robot.chassis.WHEEL_BASE;
 		this.r = r;
-//		FULL_CIRCLE = Math.PI * 
+		FULL_CIRCLE = Math.PI * 2 * r;
+		MM_PER_DEGREE = FULL_CIRCLE / 360;
+		VELOCITY = MM_PER_DEGREE / 10;
+		loop = 0;
 	}
-	
-	
-
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
 		currAngle = Robot.chassis.GetAngle();
     Robot.chassis.SetCommand(this);
-		_startTime = System.currentTimeMillis();
+	//	_startTime = System.currentTimeMillis();
 		targetAngle= Robot.chassis.NormalizeAngle(angle + currAngle);
-		System.out.println("Turn By Degree to " + angle +  " startTime = " + _startTime + " start angle=" + Robot.chassis.GetAngle() + 
-				" Target=" + targetAngle + " K_P= " + K_P + " max speed angle= " + maxSpeedAngle);
-		sumError = 0;
-		lastError = 0;
-		error = remaining();
+//		System.out.println("Turn By Degree to " + angle +  " startTime = " + _startTime + " start angle=" + Robot.chassis.GetAngle() + 
+	//			" Target=" + targetAngle + " K_P= " + K_P + " max speed angle= " + maxSpeedAngle);
+	//	sumError = 0;
+//		lastError = 0;
+//		error = remaining();
   }
   
   private double remaining() {
@@ -71,21 +72,27 @@ public class TurnByR extends Command {
 	}
 	
 
-	public void SetSpeed(double speed){
+	public void SetSpeed(){
     if(angle < 0){
-      right_speed = speed * (r + 0.5 * widthChassis) / r;
-      left_speed = speed * (r - 0.5 * widthChassis) / r;
+      right_speed = speedAngle * MM_PER_DEGREE * (r + 0.5 * wheelBase) / r;
+      left_speed = speedAngle * MM_PER_DEGREE * (r - 0.5 * wheelBase) / r;
     }
     else{
-      left_speed = speed * (r + 0.5 * widthChassis) / r;
-      right_speed = speed * (r - 0.5 * widthChassis) / r;
-    }
+      left_speed = speedAngle * MM_PER_DEGREE * (r + 0.5 * wheelBase) / r;
+      right_speed = speedAngle * MM_PER_DEGREE * (r - 0.5 * wheelBase) / r;
+		}
+		Robot.chassis.SetSpeed(left_speed, right_speed);
+		System.out.println("left speed = " + left_speed + " right speed = " + right_speed);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-		double corr;
+		loop ++;
+		if(loop ==2){
+			SetSpeed();
+		}
+/*		double corr;
 		double speed;
 		currAngle = Robot.chassis.GetAngle();
 		error = remaining();
@@ -96,22 +103,22 @@ public class TurnByR extends Command {
 		corr = p + i + d;
 		speedAngle = maxSpeedAngle * corr;
 		if(speedAngle > maxSpeedAngle)
-			speedAngle = maxSpeedAngle;
-		speed = speedAngle * MM_PER_DEGREE;
-		if(Math.abs(speed) < GoStraight.MIN_SPEED){
+			speedAngle = maxSpeedAngle; */
+	//	speed = speedAngle * MM_PER_DEGREE;
+/*		if(Math.abs(speed) < GoStraight.MIN_SPEED){
 			speed = angle < 0 ? -GoStraight.MIN_SPEED : GoStraight.MIN_SPEED; 
 		}
     SetSpeed(speed);
-		Robot.chassis.SetSpeed(left_speed, -right_speed);
+		Robot.chassis.SetSpeed(left_speed, right_speed);
 		System.out.println("speed: " + speed + " /error: " + error);
-		lastError = error;
+		lastError = error; */
 
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if((angle >= 0 && error <=3 ) || (angle < 0 && error >= -3)) {
+    if((angle >= 0 && remaining() <=5 ) || (angle < 0 && remaining() >= -5)) {
 			return true;
 		}
 		return false;
@@ -121,7 +128,7 @@ public class TurnByR extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    System.out.println("END Turn By Degree to " + angle +  " end angle=" + currAngle + "error= " + error); 
+    System.out.println("END Turn By Degree to " + angle +  " end angle=" + currAngle); 
     /*Robot.chassis.motorsLeft.ConfigKP(GroupOfMotors.K_P);
     Robot.chassis.motorsRight.ConfigKP(GroupOfMotors.K_P);*/
 		Robot.chassis.StopMotors();

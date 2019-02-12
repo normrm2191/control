@@ -24,6 +24,8 @@ public class RobotMap {
   public static int portClimbMotorTop;
   public static int portClimbMotorBack;
   public static int portClimbMoveMotor;
+  public static int portForwardClimbBuchna;
+  public static int portReverseClimbBuchna;
 
   static public int portSwitchMotor = 0;
 
