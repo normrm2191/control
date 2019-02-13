@@ -25,8 +25,8 @@ import frc.robot.commands.OpenShifter;
 public class Chassis extends Subsystem {
   public GroupOfMotors motorsRight;
   public GroupOfMotors motorsLeft;
-  public ADXRS450_Gyro gyro = null;
-  public PigeonIMU gyro1 = null;
+  public ADXRS450_Gyro _gyro = null;
+  public PigeonIMU _gyro1 = null;
   public Command activeDriveCommand= null;
   public CommandGroup activeDriveCommandGroup= null;
   private double calibrateStartTime = 0;
@@ -42,24 +42,21 @@ public class Chassis extends Subsystem {
 //  public boolean isSpeedMode;
 
   public Chassis(){
-    shifter = new DoubleSolenoid(11,RobotMap.portShifterForward, RobotMap.portShifterReverse);
+    //shifter = new DoubleSolenoid(11,RobotMap.portShifterForward, RobotMap.portShifterReverse);
     max_speed = GroupOfMotors.MAX_SPEED_SLOW / GroupOfMotors.PULSE_DIS;
-    if(shifter.get() == DoubleSolenoid.Value.kReverse) {
-      in_fast_mode = true;
-      max_speed = GroupOfMotors.MAX_SPEED_FAST / GroupOfMotors.PULSE_DIS;
-    }
-    motorsRight= new GroupOfMotors(3, RobotMap.portMotor2Right, in_fast_mode);
-    motorsLeft= new GroupOfMotors(2, RobotMap.portMotor2Left, in_fast_mode);
+    motorsRight= new GroupOfMotors(3, RobotMap.portMotor2Right, in_fast_mode, "Right");
+    motorsLeft= new GroupOfMotors(2, RobotMap.portMotor2Left, in_fast_mode, "Left");
     try{
       if(RobotMap.USE_CAN_GYRO) {
-        gyro1 = new PigeonIMU(RobotMap.CAN_GYRO_PORT);
+        _gyro1 = new PigeonIMU(RobotMap.CAN_GYRO_PORT);
       } else{
-        gyro= new ADXRS450_Gyro();
-        gyro.calibrate();
+        _gyro= new ADXRS450_Gyro();
+        _gyro.calibrate();
       }
     }
     catch(Exception e){
-      gyro= null;
+      _gyro= null;
+      _gyro1 = null;
     }
  //   isSpeedMode = true;
     motorsRight.SetReverseMode(true);
@@ -111,7 +108,14 @@ public void DisableDriveCommand(){
 }
   
 public double GetAngle(){
-  return gyro.getAngle();
+  if(_gyro1 != null) {
+    return _gyro1.getFusedHeading();
+  } else if(_gyro != null) {
+    return _gyro.getAngle();
+  } else {
+    return 0;
+  }
+
 }
 
 public void SetCommand(Command cmd){
@@ -127,9 +131,9 @@ public void SetCommand(Command cmd){
 }
 
 public void Calibrate(){
-  if(gyro != null){
+  if(!RobotMap.USE_CAN_GYRO && _gyro != null){
     if(!Robot.robot.isEnabled() && inCalibration){
-      fixRate = (gyro.getAngle() - calibrateStartAngle / System.currentTimeMillis() - calibrateStartTime);
+      fixRate = (_gyro.getAngle() - calibrateStartAngle / System.currentTimeMillis() - calibrateStartTime);
     }else{
       inCalibration = false;
     }
@@ -137,10 +141,15 @@ public void Calibrate(){
 }
 
 public void GyroReset(){
-  if(gyro!= null){
-    gyro.reset();
-    calibrateStartAngle = gyro.getAngle();
-    inCalibration = true ;
+  if(RobotMap.USE_CAN_GYRO) {
+    if(_gyro1 != null) {
+      calibrateStartAngle = _gyro1.getFusedHeading();
+      inCalibration = true ;
+    }
+  } else if(_gyro != null) {
+      _gyro.reset();
+      calibrateStartAngle = _gyro.getAngle();
+      inCalibration = true ;
   }
   
 }
@@ -248,7 +257,6 @@ public void resetEncs(){
   motorsLeft.ResetEnc();
   motorsRight.ResetEnc();
 }
-
 
   @Override
   public void initDefaultCommand() {

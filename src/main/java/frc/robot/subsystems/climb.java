@@ -13,7 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 
-public class Climb extends Subsystem {
+public class Climb extends Subsystem  {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   public TalonSRX liftMotor_top;
@@ -23,7 +23,7 @@ public class Climb extends Subsystem {
 
 public Climb()  {
   liftMotor_bot = new TalonSRX(RobotMap.portClimbMotorBack);
-  liftMotor_top = new TalonSRX(RobotMap.portClimbMotorTop);
+  liftMotor_top = new TalonSRX(RobotMap.portClimbMotorFront);
   move_motor = new TalonSRX(RobotMap.portClimbMoveMotor);
 }
 

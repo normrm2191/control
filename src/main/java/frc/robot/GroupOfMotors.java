@@ -12,28 +12,36 @@ import javax.lang.model.util.ElementScanner6;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-public class GroupOfMotors {
+import edu.wpi.first.wpilibj.Sendable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+public class GroupOfMotors implements Sendable {
     
     public TalonSRX motor1;
   //  public TalonSRX motor2;
     public double reverse;
     public boolean isSpeedMode;
+
     public static final double K_P = 1.0 / 5.0;
-    public static final double K_I = 0;
+    public static final double K_I = K_P / 50;
     public static final double K_D = 0;
     public static final double MAX_POWER_FOR_MAX_SPEED_SLOW = 1023 * 0.5; // 1/3 power
     public static final double MAX_POWER_FOR_MAX_SPEED_FAST = 1023 * 0.8; // 1/2 power
     public static final double PULSE_DIS=0.116;
     public static final double SPEED_TO_TALON_SPEED = 0.1 / PULSE_DIS;
-    public static final double MAX_SPEED_SLOW =2500;
+    public static final double MAX_SPEED_SLOW =2000;
     public static final double MAX_SPEED_FAST =7000;
     public static final double K_F_FAST = MAX_POWER_FOR_MAX_SPEED_FAST / (MAX_SPEED_FAST * SPEED_TO_TALON_SPEED);
     public static final double K_F_SLOW = MAX_POWER_FOR_MAX_SPEED_SLOW / (MAX_SPEED_SLOW * SPEED_TO_TALON_SPEED);
     public double baseEncoder=0;
 
+    public String name;
 
-    public GroupOfMotors(int port1, int port2, boolean in_fast_mode){
-        System.out.println("Starting motor - " + port1);
+
+    public GroupOfMotors(int port1, int port2, boolean in_fast_mode, String name) {
+        this.name = name;
+        System.out.println("Starting " + name + " motor on port " + port1);
         motor1= new TalonSRX(port1);
     //    motor2= new TalonSRX(port2);
     //    motor2.follow(motor1);
@@ -59,6 +67,7 @@ public class GroupOfMotors {
         } else {
             ConfigKF(K_F_SLOW);
         }
+        SmartDashboard.putData(this);
     }
 
     public void ConfigKP(double k_p){
@@ -119,4 +128,68 @@ public class GroupOfMotors {
     public void SetFast(){
         ConfigKF(K_F_FAST);
     }
+
+    public double motorVeocity() {
+        return motor1.getSelectedSensorVelocity();
+    }
+    public double motorPIDTarget() {
+        return motor1.getClosedLoopTarget();
+    }
+    public double motorPIDError() {
+        return motor1.getClosedLoopError();
+    }
+    public double motorPowerPercent() {
+        return motor1.getMotorOutputPercent();
+    }
+    public double motorOutputVolt() {
+        return motor1.getMotorOutputVoltage();
+    }
+    public double motorBusVolt() {
+        return motor1.getBusVoltage();
+    }
+    public double motorCurrent() {
+        return motor1.getOutputCurrent();
+    }
+    public void PrintSpeed(){
+        double v = motorVeocity();
+        double t = motorPIDTarget();
+        double e = motorPIDError();
+        double p = motorPowerPercent();
+        double ov = motorOutputVolt();
+        double bv = motorBusVolt();
+        double c = motorCurrent();
+        System.out.printf("v=%.1f pwr=%.2f ovlt=%.1f bvlt=%.1f %%=%.0f amp=%.2f tgt=%.1f err=%.1f\n",
+                v, p, ov, bv, 100.0 * ov / bv, c, t, e);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+
+    }
+
+    @Override
+    public String getSubsystem() {
+        return "Chassis";
+    }
+
+    @Override
+    public void setSubsystem(String subsystem) {
+
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty(name + " velocity", this::motorVeocity, null);
+        builder.addDoubleProperty(name + " target", this::motorPIDTarget, null);
+        builder.addDoubleProperty(name + " error", this::motorPIDError, null);
+        builder.addDoubleProperty(name + " power", this::motorPowerPercent, null);
+        builder.addDoubleProperty(name + " volt", this::motorOutputVolt, null);
+        builder.addDoubleProperty(name + " bus volt", this::motorBusVolt, null);
+        builder.addDoubleProperty(name + " amps", this::motorCurrent, null);
+	}
 }

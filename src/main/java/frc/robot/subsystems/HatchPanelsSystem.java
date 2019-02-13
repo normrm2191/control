@@ -34,7 +34,7 @@ public class HatchPanelsSystem extends Subsystem {
 
   public HatchPanelsSystem(){
     isforward = true;
-    motor= new TalonSRX(RobotMap.portSwitchMotor);
+    motor= new TalonSRX(RobotMap.portArmMotor);
     motor.config_kP(0, K_P,0);
     motor.config_kI(0, K_I,0);
     motor.config_kD(0, K_D,0);
