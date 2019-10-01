@@ -5,6 +5,12 @@ public class VectorPoint {
     public double x; // in rad
     public double y; // in mm
 
+    @Override
+    public String toString() {
+        Vector v = new Vector(this);
+        return " vp-" + x + " " + y + " " + v.toString();
+    }
+
     public VectorPoint(double x, double y) {
         this.x = x;
         this.y = y;

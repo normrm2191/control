@@ -21,21 +21,20 @@ public class RobotMap {
   public static int portMotor2Right=4;
 
   //climb
-  public static int portClimbMotorFront = 5;
+  public static int portClimbMotorFront1 = 5;
+  public static int portClimbMotorFront2 = 8;
   public static int portClimbMotorBack = 6;
   public static int portClimbMoveMotor = 7;
+  public static int portClimbBuchnaFwd = 5; // 4;
+  public static int portClimbBuchnaBwd = 6; // 5;
 
-  static public int portArmMotor = 8;
+  static public int portArmMotor = 9;
+  public static int portHatchPanelBuchnaFwd = 4; // 0
+  public static int portHatchPanelBuchnaBwd = 3;  // 1
+  public static int portPCM = 19;
 
-  public static int portShifterForward = 0;
-  public static int portShifterReverse = 1;
-
-  public static int BUTTON_BOTTOM = 1;
-  public static int BUTTON_MIDDLE = 2;
-  public static int BUTTON_CHANGE_LIFT_DIR = 2;
-  public static int BUTTON_UP=3;
-
-  public static int BUTTON_SHIFTER = 1;
+  public static int portShifterForward = 1; // 2;
+  public static int portShifterReverse = 2; // 3;
 
   public static final int CAN_GYRO_PORT = 21;
   public static final boolean USE_CAN_GYRO = true;

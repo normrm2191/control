@@ -14,15 +14,28 @@ import frc.robot.subsystems.Chassis;
 
 public class TurnByR extends Command {
 
+	public static final double ALLOWED_ERROR = 3.0;
+
 	public double targetAngle;
 	public double angle;
 	double rateOfRotation;
 	double r;
+	boolean isAbsAngle;
+	boolean stopAtEnd;
 
-  public TurnByR(double angle , double speedAngle, double r) {
+	public TurnByR(double angle , double speedAngle, double r) {
+		this(angle, speedAngle, r, true, false);
+	}
+		public TurnByR(double angle , double speedAngle, double r, boolean stopAtEnd) {
+		this(angle, speedAngle, r, stopAtEnd, false);
+	}
+
+	public TurnByR(double angle , double speedAngle, double r, boolean stopAtEnd, boolean isAbsAngle) {
 		this.angle = angle;
 		this.rateOfRotation = speedAngle;
 		this.r = r;
+		this.isAbsAngle = isAbsAngle;
+		this.stopAtEnd = stopAtEnd;
 	}
 
   // Called just before this Command runs the first time
@@ -32,8 +45,14 @@ public class TurnByR extends Command {
 		double inner_mm_per_degree = (r - Chassis.WHEEL_BASE/2) * Math.PI / 180;
 		System.out.println("outer_mm_per_degree: " + outer_mm_per_degree + 
 		"  inner_mm_per_degree: " + inner_mm_per_degree);
-    Robot.chassis.SetCommand(this);
-		targetAngle= Robot.chassis.NormalizeAngle(angle + Robot.chassis.GetAngle());
+		Robot.chassis.SetCommand(this);
+		double curr = Robot.chassis.GetAngle();
+		if(isAbsAngle) {
+			targetAngle = angle;
+			angle = Robot.chassis.NormalizeAngle(targetAngle  - curr);
+		} else {
+			targetAngle= Robot.chassis.NormalizeAngle(angle + curr);
+		}
 		double outerSpeed = outer_mm_per_degree * rateOfRotation;
 		double innerSpeed = inner_mm_per_degree * rateOfRotation;
 		System.out.println("outerSpeed: " + outerSpeed + "  innerSpeed: " + innerSpeed);
@@ -56,18 +75,17 @@ public class TurnByR extends Command {
 		double currAngle = Robot.chassis.GetAngle();
 		double remain = targetAngle - currAngle;
 		System.out.println("TuurnR remain - " + remain);
-    if((angle >= 0 && remain <=3 ) || (angle < 0 && remain >= -3)) {
-			return true;
-		}
-		return false;
+		return Math.abs(remain) < ALLOWED_ERROR;
 	}
 
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    System.out.println("END Turn By Degree to " + angle +  " end angle=" + Robot.chassis.GetAngle()); 
-		Robot.chassis.StopMotors();
+		System.out.println("END Turn By Degree to " + angle +  " end angle=" + Robot.chassis.GetAngle()); 
+		if(stopAtEnd) {
+			Robot.chassis.StopMotors();
+		}
 		Robot.chassis.SetCommand(null);
   }
 

@@ -15,24 +15,25 @@ public class Vector {
         this.length = 0;
     }
 
+
     public Vector(Vector v) {
         angle = v.angle;
         length = v.length;
     }
 
     public Vector(VectorPoint p) {
-        length = p.distance(0,0);
-        angle = p.angle(0,0);
+        length = p.GetLengthOfVector();
+        angle = p.GetAngleOfVector();
     }
 
     public double x() {
-        return length * Math.sin(angle);
+        return length * Math.sin(Math.toRadians(angle));
     }
     public double y() {
-        return length * Math.cos(angle);
+        return length * Math.cos(Math.toRadians(angle));
     }
 
-    public void normalized() {
+/*    public void normalized() {
         angle = normalizeAngle(angle);
     }
 
@@ -64,11 +65,6 @@ public class Vector {
         p.y += v2.y();
         return new Vector(p);
     }
-    
-    @Override
-    public String toString() {
-        return String.format("Vector - %.2fdeg/%.2fmm at %.2f/%.2f",Math.toDegrees(angle), length, x(), y());
-    }
     public Vector ReverseVector(Vector v){
         if(v.angle>0){
             v.angle=v.angle-Math.PI;
@@ -79,20 +75,6 @@ public class Vector {
    
    
        }
-       
-
-
-       
-
-    public static void main(String[] args) {
-        Vector v1 = new Vector(-30,100);
-        System.out.println(v1.toString());
-        Vector v2 = new Vector(60,200);
-        System.out.println(v2.toString());
-        System.out.println(add(v1,v2).toString());
-        System.out.println(add(v2,v1).toString());
-    }
-    
     public Vector UdiRequestedVactor(Vector v1, Vector t2){
     Vector v8 = new Vector(1, 46);
      VectorPoint v = new VectorPoint(335, 387);
@@ -112,12 +94,26 @@ public class Vector {
      return udiVector;
     }
 
+    public static void main(String[] args) {
+        Vector v1 = new Vector(-30,100);
+        System.out.println(v1.toString());
+        Vector v2 = new Vector(60,200);
+        System.out.println(v2.toString());
+        System.out.println(add(v1,v2).toString());
+        System.out.println(add(v2,v1).toString());
+    }
+    
+    */
+    
+    @Override
+    public String toString() {
+        return String.format("Vector - %.2fdeg/%.2fmm at %.2f/%.2f",angle, length, x(), y());
+    }
+
    public static Vector ConvertToVector(VectorPoint p){
        double angle = Math.abs(Math.atan(p.x/p.y) * 180 / Math.PI);
        angle = p.x > 0 ? angle : -angle;
        return new Vector(angle, Math.sqrt(Math.pow(p.x,2)+Math.pow(p.y,2)));
-
    }
-        
 
 }

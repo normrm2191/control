@@ -8,15 +8,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.GroupOfMotors;
 import frc.robot.Robot;
+import frc.robot.subsystems.Chassis;
 
 public class TurnByDegrees extends Command {
 
   static final double K_I = 0.0;
 	static final double K_D = 0.0;
 	static final double K_P = 1.0/30.0; // reduce rotation rate from 30 degrees
-	static final double FULL_CIRCLE = Math.PI * Robot.chassis.WHEEL_BASE; // Wheel Base is the Diameter
+	static final double FULL_CIRCLE = Math.PI * Chassis.WHEEL_BASE; // Wheel Base is the Diameter
 	static final double MM_PER_DEGREE = FULL_CIRCLE / 360;
 	static final double VELOCITY = MM_PER_DEGREE / 10;
 	static final double MIN_SPEED = 500;
@@ -25,20 +25,30 @@ public class TurnByDegrees extends Command {
 	double maxRotationRate;
 	double lastError;
 	double sumError;
+	boolean isAbsAngle;
 
 
 
   public TurnByDegrees(double angle , double speedAngle) {
+		this(angle, speedAngle, false);
+	}
+  public TurnByDegrees(double angle , double speedAngle, boolean isAbsAngle) {
 		this.angle = angle;
 		maxRotationRate = speedAngle;
+		this.isAbsAngle = isAbsAngle;
 	}
 	
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
 		double currAngle = Robot.chassis.GetAngle();
-    Robot.chassis.SetCommand(this);
-		targetAngle= Robot.chassis.NormalizeAngle(angle + currAngle);
+		Robot.chassis.SetCommand(this);
+		if(isAbsAngle) {
+			targetAngle = angle;
+			angle = Robot.chassis.NormalizeAngle(targetAngle - currAngle);
+		} else {
+			targetAngle= Robot.chassis.NormalizeAngle(angle + currAngle);
+		}
 		System.out.println("Turn By Degree to " + angle + " start angle=" + Robot.chassis.GetAngle() + 
 			" Target=" + targetAngle + " K_P= " + K_P + " max speed angle= " + maxRotationRate);
 		sumError = 0;

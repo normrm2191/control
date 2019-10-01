@@ -7,55 +7,47 @@
 
 package frc.robot.commands;
 
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
-public class DriveByJoystickCommand extends Command {
+public class DropHatch extends Command {
 
-  public static final double MIN_JS_VALUE = 0.15;
+  int cycles = 0;
 
-  public DriveByJoystickCommand() {
-    
-    
+  public DropHatch() {
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    cycles = 0;
+    Robot.hatchPanelsSystem.dropPanel();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(!Robot.chassis.HaveActiveCommand())
-    {
-      double leftJoystickValue = -Robot.driverInterface.joystickLeft.getY();   
-      double rightJoystickValue = -Robot.driverInterface.joystickRight.getY();
-      leftJoystickValue = Math.abs(leftJoystickValue)<MIN_JS_VALUE ? 0 : leftJoystickValue;
-      rightJoystickValue = Math.abs(rightJoystickValue)<MIN_JS_VALUE ? 0 : rightJoystickValue;
-      double lValue = leftJoystickValue * leftJoystickValue * leftJoystickValue; // Math.abs(leftJoystickValue) * leftJoystickValue;
-      double rValue = rightJoystickValue *  rightJoystickValue * rightJoystickValue; // Math.abs(rightJoystickValue) * rightJoystickValue;
-      Robot.chassis.motorsSetValue(lValue, rValue);
+    cycles++;
+    if(cycles >= 10) {
+      Robot.hatchPanelsSystem.unDropPanel();
     }
-    }
-  
+  }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return cycles >= 30;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    Robot.hatchPanelsSystem.stopBuchna();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.chassis.motorsSetValue(0,0);
   }
 }

@@ -9,7 +9,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.DriverInterface;
 
 public class DriveByJoysticArcade extends Command {
   public DriveByJoysticArcade() {
@@ -29,14 +28,18 @@ public class DriveByJoysticArcade extends Command {
     double y = -Robot.driverInterface.joystickRight.getY(); //joystic's y value is reversed
     x =  Math.abs(x)<DriveByJoystickCommand.MIN_JS_VALUE ? 0 : x;
     y =  Math.abs(y)<DriveByJoystickCommand.MIN_JS_VALUE ? 0 : y;
+    x = x*x*x;
+    y = y*y*y;
     double leftSpeed = y + x;
     double rightSpeed = y - x;
     if(leftSpeed < -1) leftSpeed = -1;
     if(leftSpeed > 1) leftSpeed = 1;
     if(rightSpeed < -1) rightSpeed = -1;
     if(rightSpeed > 1) rightSpeed = 1;
-    System.out.println("drive: " + x + " " + y + " - " + leftSpeed + "/" + rightSpeed);
     Robot.chassis.motorsSetValue(leftSpeed,rightSpeed);
+    if(leftSpeed != 0 || rightSpeed != 0) {
+//      System.out.println("Arcade - " + leftSpeed + " / " + rightSpeed);
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

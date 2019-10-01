@@ -10,57 +10,68 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.GroupOfMotors;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.robot.commands.CloseShifter;
-import frc.robot.commands.OpenShifter;
 
 
-public class Chassis extends Subsystem {
+public class Chassis extends Subsystem implements Sendable {
   public GroupOfMotors motorsRight;
   public GroupOfMotors motorsLeft;
-  public ADXRS450_Gyro _gyro = null;
-  public PigeonIMU _gyro1 = null;
+  public PigeonIMU _gyro = null;
   public Command activeDriveCommand= null;
   public CommandGroup activeDriveCommandGroup= null;
-  private double calibrateStartTime = 0;
-  private double calibrateStartAngle = 0;
-  private boolean inCalibration = true;
-  private double fixRate = 0;
   public DoubleSolenoid shifter; // open = fast
   public boolean isReverseMode;
   public double max_speed;
   public boolean in_fast_mode = false;
+  public boolean inSpeedMode = true;
+  public double baseGyro = 0;
 
   public static final double WHEEL_BASE = 600;
 //  public boolean isSpeedMode;
 
   public Chassis(){
-    //shifter = new DoubleSolenoid(11,RobotMap.portShifterForward, RobotMap.portShifterReverse);
+    shifter = new DoubleSolenoid(RobotMap.portPCM,RobotMap.portShifterForward, RobotMap.portShifterReverse);
     max_speed = GroupOfMotors.MAX_SPEED_SLOW / GroupOfMotors.PULSE_DIS;
-    motorsRight= new GroupOfMotors(3, RobotMap.portMotor2Right, in_fast_mode, "Right");
-    motorsLeft= new GroupOfMotors(2, RobotMap.portMotor2Left, in_fast_mode, "Left");
+    motorsRight= new GroupOfMotors(RobotMap.portMotor1Right, RobotMap.portMotor2Right, in_fast_mode, "Right");
+    motorsLeft= new GroupOfMotors(RobotMap.portMotor1Left, RobotMap.portMotor2Left, in_fast_mode, "Left");
     try{
-      if(RobotMap.USE_CAN_GYRO) {
-        _gyro1 = new PigeonIMU(RobotMap.CAN_GYRO_PORT);
-      } else{
-        _gyro= new ADXRS450_Gyro();
-        _gyro.calibrate();
-      }
+      _gyro = new PigeonIMU(RobotMap.CAN_GYRO_PORT);
+      setName("chassis");
     }
     catch(Exception e){
       _gyro= null;
-      _gyro1 = null;
     }
  //   isSpeedMode = true;
     motorsRight.SetReverseMode(true);
     isReverseMode = false;
+    SmartDashboard.putData(this);
+    motorsRight.reverseEncoder();
+    motorsLeft.reverseEncoder();
+}
+
+public void resetGyro() {
+  baseGyro = GetRawAngle();
+}
+
+public void setPIDFromSmartDashboard() {
+  double k_f = SmartDashboard.getNumber("Motor K_F", 0);
+  double k_p = SmartDashboard.getNumber("Motor K_P", 0);
+  double k_i = SmartDashboard.getNumber("Motor K_I", 0);
+  double k_d = SmartDashboard.getNumber("Motor K_D", 0);
+  Set_K_D(k_d);
+  Set_K_F(k_f);
+  Set_K_I(k_i);
+  Set_K_P(k_p);
+  System.out.printf("PID = %f/%f/%f/%f\n",k_p,k_i,k_d,k_f);
 }
 
 public void Set_K_P(double K_P){
@@ -107,11 +118,19 @@ public void DisableDriveCommand(){
   }
 }
   
-public double GetAngle(){
-  if(_gyro1 != null) {
-    return _gyro1.getFusedHeading();
-  } else if(_gyro != null) {
-    return _gyro.getAngle();
+public double GetRawAngle(){
+  return -_gyro.getFusedHeading();
+}
+  public double GetAngle(){
+  if(_gyro != null) {
+    double h = GetRawAngle() - baseGyro;
+    if(h > 180) {
+      return 180 - h;
+    } else if(h < -180) {
+      return h + 180;
+    } else {
+      return h;
+    }
   } else {
     return 0;
   }
@@ -130,32 +149,7 @@ public void SetCommand(Command cmd){
   activeDriveCommand= cmd;
 }
 
-public void Calibrate(){
-  if(!RobotMap.USE_CAN_GYRO && _gyro != null){
-    if(!Robot.robot.isEnabled() && inCalibration){
-      fixRate = (_gyro.getAngle() - calibrateStartAngle / System.currentTimeMillis() - calibrateStartTime);
-    }else{
-      inCalibration = false;
-    }
-  }
-}
-
-public void GyroReset(){
-  if(RobotMap.USE_CAN_GYRO) {
-    if(_gyro1 != null) {
-      calibrateStartAngle = _gyro1.getFusedHeading();
-      inCalibration = true ;
-    }
-  } else if(_gyro != null) {
-      _gyro.reset();
-      calibrateStartAngle = _gyro.getAngle();
-      inCalibration = true ;
-  }
-  
-}
-
  public void motorsSetValue(double left, double right){
-   System.out.println("left: " + left + "right: " + right);
    if(!isReverseMode){
     motorsRight._setValue(right);
     motorsLeft._setValue(left);
@@ -222,27 +216,19 @@ public double NormalizeAngle(double angle){
 }
 
 public void setSlowMode(){
-  shifter.set(DoubleSolenoid.Value.kForward);
+  shifter.set(DoubleSolenoid.Value.kReverse);
   in_fast_mode = false;
-  max_speed = GroupOfMotors.MAX_SPEED_SLOW / GroupOfMotors.PULSE_DIS;
+  max_speed = GroupOfMotors.MAX_SPEED_SLOW;
   motorsLeft.SetSlow();
   motorsRight.SetSlow();
 }
 
 public void setFastMode() { // CloseShifter(){
-  shifter.set(DoubleSolenoid.Value.kReverse);
+  shifter.set(DoubleSolenoid.Value.kForward);
   in_fast_mode = true;
-  max_speed = GroupOfMotors.MAX_SPEED_FAST / GroupOfMotors.PULSE_DIS;
+  max_speed = GroupOfMotors.MAX_SPEED_FAST;
   motorsLeft.SetFast();
   motorsRight.SetFast();
-}
-
-public void ChangeShifter(boolean slow) { // boolean open){
-  if(slow){
-    setSlowMode();
-  } else {
-    setFastMode();
-  }
 }
 
 public void offShifter(){
@@ -261,5 +247,106 @@ public void resetEncs(){
   @Override
   public void initDefaultCommand() {
    
+  }
+
+  double [] ypr = {0,0,0};
+  double [] wxyz = {0,0,0,0};
+
+  public double[] getGyroYPR(){
+    if(_gyro!=null){
+      _gyro.getYawPitchRoll(ypr);
+      return ypr;
+    } else {
+      return ypr;
+    }
+    
+  }
+  public double getGyroYaw(){
+    if(_gyro!=null){
+      _gyro.getYawPitchRoll(ypr);
+      return ypr[0];
+    } else {
+      return 999;
+    }
+  }
+  public double getGyroPitch(){
+    if(_gyro!=null){
+      _gyro.getYawPitchRoll(ypr);
+      return ypr[1];
+    } else {
+      return 999;
+    }
+  }
+  public double getGyroRoll(){
+    if(_gyro!=null){
+      _gyro.getYawPitchRoll(ypr);
+      return ypr[2];
+    } else {
+      return 999;
+    }
+  }
+
+  public double getZ() {
+    _gyro.get6dQuaternion(wxyz);
+    return wxyz[3];
+  }
+  public double getY() {
+    _gyro.get6dQuaternion(wxyz);
+    return wxyz[2];
+  }
+  public double getX() {
+    _gyro.get6dQuaternion(wxyz);
+    return wxyz[1];
+  }
+  public double getW() {
+    _gyro.get6dQuaternion(wxyz);
+    return wxyz[0];
+  }
+
+  public boolean isFastMode() {
+    return in_fast_mode;
+  }
+
+  public boolean isReverseMode() {
+    return isReverseMode;
+  }
+
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.addDoubleProperty("Yaw",this::getGyroYaw, null);
+    builder.addDoubleProperty("Pitch",this::getGyroPitch, null);
+    builder.addDoubleProperty("Roll",this::getGyroRoll, null);
+    builder.addDoubleProperty("Angle",this::GetAngle, null);
+    builder.addDoubleProperty("L Enc",this::getLeftDistance, null);
+    builder.addDoubleProperty("R Enc",this::getRightDistance, null);
+    builder.addBooleanProperty("Fast",this::isFastMode, null);
+    builder.addBooleanProperty("Reverse",this::isReverseMode, null);
+  }
+
+ // called peridically to update the shifter and reset encoders and reverse mode
+  public void UpdateStatus() {
+    // change shifter
+    if(Robot.driverInterface.joystickRight.getRawButtonPressed(DriverInterface.BUTTON_SHIFTER)){
+      System.out.println("Set Slow Mode"); 
+      setSlowMode();
+    } else if(Robot.driverInterface.joystickLeft.getRawButtonPressed(DriverInterface.BUTTON_SHIFTER)){
+      System.out.println("Set fast Mode"); 
+      setFastMode();
+    } else {
+      offShifter();
+    }
+
+    // reverse mode
+    int pov = Robot.driverInterface.xbox.getPOV();
+    if(pov == 180){  //set reverse mode 
+      Robot.chassis.SetReverseMode(true);
+    } else if(pov == 0) {
+      Robot.chassis.SetReverseMode(false);
+    } 
+
+    // resetr encoder
+    if(Robot.driverInterface.joystickLeft.getRawButtonPressed(DriverInterface.RESET_ENCODER)) { 
+      resetEncs();
+    }
   }
 }

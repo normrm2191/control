@@ -9,7 +9,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.Chassis;
 
 public class GoStraight extends Command {
 
@@ -23,6 +22,8 @@ public class GoStraight extends Command {
   public int direction;
   public boolean stopAtEnd;
   public long maxTime;
+  public boolean isAbsAngle;
+  public double absAngle;
   
   public static final double K_P = 1.0 / 50.0;
   public static final double K_I = K_P / 100;
@@ -44,6 +45,7 @@ public class GoStraight extends Command {
     this.maxTime=maxTime;
     this.distance=distance;
     this.speed=speed;
+    this.isAbsAngle = false;
     if(distance<0){
       direction=-1;
     }
@@ -51,6 +53,19 @@ public class GoStraight extends Command {
       direction=1;
     }
     this.stopAtEnd = stopAtEnd;
+  }
+
+  public GoStraight(double distance,double speed,boolean stopAtEnd, double absAngle)
+  {
+    this(distance,speed,stopAtEnd,-1);
+    isAbsAngle = true;
+    this.absAngle = absAngle;
+  }
+  
+  public GoStraight(double distance,double speed,boolean stopAtEnd,long maxTime, double absAngle){
+    this(distance,speed,stopAtEnd,maxTime);
+    isAbsAngle = true;
+    this.absAngle = absAngle;
   }
  
   private void SetDistance(){
@@ -60,7 +75,11 @@ public class GoStraight extends Command {
   @Override
   protected void initialize() {
     Robot.chassis.SetCommand(this);
-    gyroStartValue = Robot.chassis.GetAngle();
+    if(isAbsAngle) {
+      gyroStartValue = absAngle;
+    } else {
+      gyroStartValue = Robot.chassis.GetAngle();
+    }
     if(maxTime > 0){
       maxTime += System.currentTimeMillis();
     }

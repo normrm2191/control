@@ -30,16 +30,12 @@ double power;
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.climb.liftMotor_top.set(ControlMode.PercentOutput, power);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(power > 0)
-    return Robot.climb.liftMotor_top.getSensorCollection().isFwdLimitSwitchClosed();
-    else 
-    return Robot.climb.liftMotor_top.getSensorCollection().isRevLimitSwitchClosed();
+    return false;
   }
 
   // Called once after isFinished returns true
